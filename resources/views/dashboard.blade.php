@@ -80,11 +80,12 @@
 	</div>
 
 	<script>
-		var currentRoute = window.location.pathname;
-		console.log(currentRoute);
-		if (currentRoute == '/') {
-			$('#menu-dashboard').addClass('active');
-			$('#menu-penawaran', '#menu-do').removeClass('active');
-		}
+		$(document).ready(function() {
+			var currentRoute = window.location.pathname;
+			if (currentRoute == '/') {
+				$('#menu-dashboard').addClass('active');
+				$('#menu-penawaran', '#menu-do').removeClass('active');
+			}
+		});
 	</script>
 @endsection

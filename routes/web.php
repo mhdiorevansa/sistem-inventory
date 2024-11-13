@@ -35,4 +35,6 @@ Route::group(['prefix' => 'delivery-order'], function () {
     Route::get('/get-perusahaan', [DoController::class, 'getPerusahaan']);
     Route::post('/create-perusahaan', [DoController::class, 'createPerusahaan']);
     Route::get('/list-perusahaan', [DoController::class, 'getListPerusahaan']);
+    Route::get('/no-surat-jalan', [DoController::class, 'getNoSuratJalan']);
+    Route::get('/no-surat-inv', [DoController::class, 'getNoInv']);
 });

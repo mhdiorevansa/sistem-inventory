@@ -122,116 +122,118 @@
 	</div>
 
 	<script>
-		let tablePenawaran = $('#penawaran-table').DataTable({
-			processing: true,
-			serverSide: true,
-			searching: true,
-			responsive: false,
-			ajax: "penawaran/get-penawaran",
-			columns: [{
-					data: "DT_RowIndex",
-					name: "DT_RowIndex",
-					className: 'text-start',
-					orderable: false,
-					searchable: false,
-				},
-				{
-					data: 'nama_item',
-					name: 'nama_item',
-					className: 'text-start',
-				},
-				{
-					data: 'qty',
-					name: 'qty',
-					className: 'text-start',
-				},
-				{
-					data: 'belanja',
-					name: 'belanja',
-					className: 'text-start',
-					render: function(data, type, row) {
-						return data.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-					}
-				},
-				{
-					data: 'ongkir',
-					name: 'ongkir',
-					className: 'text-start',
-					render: function(data, type, row) {
-						return data.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-					}
-				},
-				{
-					data: 'total',
-					name: 'total',
-					className: 'text-start',
-					render: function(data, type, row) {
-						return data.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-					}
-				},
-				{
-					data: 'net',
-					name: 'net',
-					className: 'text-start',
-					render: function(data, type, row) {
-						return data.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-					}
-				},
-				{
-					data: '10%',
-					name: '10%',
-					className: 'text-start',
-					render: function(data, type, row) {
-						return data.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-					}
-				},
-				{
-					data: 'penawaran',
-					name: 'penawaran',
-					className: 'text-start',
-					render: function(data, type, row) {
-						return data.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-					}
-				},
-				{
-					data: 'untung',
-					name: 'untung',
-					className: 'text-start',
-					render: function(data, type, row) {
-						return data.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-					}
-				},
-				{
-					data: 'untung_belanja',
-					name: 'untung_belanja',
-					className: 'text-start',
-					render: function(data, type, row) {
-						return data.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-					}
-				},
-				{
-					"data": null,
-					"name": "ariba",
-					render: function(data, type, row, meta) {
-						var ariba = row.ariba !== null ? row.ariba.toString().replace(/\B(?=(\d{3})+(?!\d))/g,
-							".") : '0';
-						return '<div class="input-group" style="width:100px">' +
-							'<input type="text" class="form-control form-control-sm ariba-input" value="' +
-							ariba + '" data-id="' + row.id + '" data-original="' + ariba +
-							'" oninput="return formatNumber(this, event)">' +
-							'<button class="btn btn-sm btn-outline-secondary" type="button" onclick="submitAriba(' +
-							row.id + ')" id="button-submit-ariba-' + row.id + '">' +
-							'<i class="bi bi-check-lg"></i>' +
-							'</button>' +
-							'</div>';
-					}
-				},
-				{
-					"orderable": false,
-					"searchable": false,
-					"data": null,
-					"render": function(data, type, row, meta) {
-						var html = `
+		$(document).ready(function() {
+			let tablePenawaran = $('#penawaran-table').DataTable({
+				processing: true,
+				serverSide: true,
+				searching: true,
+				responsive: false,
+				ajax: "penawaran/get-penawaran",
+				columns: [{
+						data: "DT_RowIndex",
+						name: "DT_RowIndex",
+						className: 'text-start',
+						orderable: false,
+						searchable: false,
+					},
+					{
+						data: 'nama_item',
+						name: 'nama_item',
+						className: 'text-start',
+					},
+					{
+						data: 'qty',
+						name: 'qty',
+						className: 'text-start',
+					},
+					{
+						data: 'belanja',
+						name: 'belanja',
+						className: 'text-start',
+						render: function(data, type, row) {
+							return data.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+						}
+					},
+					{
+						data: 'ongkir',
+						name: 'ongkir',
+						className: 'text-start',
+						render: function(data, type, row) {
+							return data.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+						}
+					},
+					{
+						data: 'total',
+						name: 'total',
+						className: 'text-start',
+						render: function(data, type, row) {
+							return data.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+						}
+					},
+					{
+						data: 'net',
+						name: 'net',
+						className: 'text-start',
+						render: function(data, type, row) {
+							return data.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+						}
+					},
+					{
+						data: '10%',
+						name: '10%',
+						className: 'text-start',
+						render: function(data, type, row) {
+							return data.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+						}
+					},
+					{
+						data: 'penawaran',
+						name: 'penawaran',
+						className: 'text-start',
+						render: function(data, type, row) {
+							return data.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+						}
+					},
+					{
+						data: 'untung',
+						name: 'untung',
+						className: 'text-start',
+						render: function(data, type, row) {
+							return data.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+						}
+					},
+					{
+						data: 'untung_belanja',
+						name: 'untung_belanja',
+						className: 'text-start',
+						render: function(data, type, row) {
+							return data.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+						}
+					},
+					{
+						"data": null,
+						"name": "ariba",
+						render: function(data, type, row, meta) {
+							var ariba = row.ariba !== null ? row.ariba.toString().replace(
+								/\B(?=(\d{3})+(?!\d))/g,
+								".") : '0';
+							return '<div class="input-group" style="width:100px">' +
+								'<input type="text" class="form-control form-control-sm ariba-input" value="' +
+								ariba + '" data-id="' + row.id + '" data-original="' + ariba +
+								'" oninput="return formatNumber(this, event)">' +
+								'<button class="btn btn-sm btn-outline-secondary" type="button" onclick="submitAriba(' +
+								row.id + ')" id="button-submit-ariba-' + row.id + '">' +
+								'<i class="bi bi-check-lg"></i>' +
+								'</button>' +
+								'</div>';
+						}
+					},
+					{
+						"orderable": false,
+						"searchable": false,
+						"data": null,
+						"render": function(data, type, row, meta) {
+							var html = `
 							<div class="dropstart">
 								<button type="button" class="dropdown-toggle border-0 bg-transparent" data-bs-toggle="dropdown" aria-expanded="false">
 									<i class="bi bi-three-dots"></i>
@@ -245,21 +247,28 @@
 									<li><a class="text-danger w-100 text-decoration-none d-block" title="hapus data" href="javascript:void(0);" onclick="deleteData('${row.id}')">Hapus</a></li>
 								</ul>
 							</div>`;
-						return html;
-					},
-					className: 'text-center'
-				}
+							return html;
+						},
+						className: 'text-center'
+					}
 
-			],
-			"initComplete": function(settings, json) {
-				$('[data-kt-menu]').each(function() {
-					var menu = new KTMenu(this);
-				});
-			},
-			columnDefs: [{
-				responsivePriority: 1,
-				targets: [0, -1],
-			}],
+				],
+				"initComplete": function(settings, json) {
+					$('[data-kt-menu]').each(function() {
+						var menu = new KTMenu(this);
+					});
+				},
+				columnDefs: [{
+					responsivePriority: 1,
+					targets: [0, -1],
+				}],
+			});
+
+			var currentRoute = window.location.pathname;
+			if (currentRoute == '/penawaran') {
+				$('#menu-penawaran').addClass('active');
+				$('#menu-dashboard', '#menu-do').removeClass('active');
+			}
 		});
 
 		function submitAriba(id) {
@@ -600,12 +609,6 @@
 			var inputVal = input.value.replace(/[^,\d]/g, '');
 			var numberString = inputVal.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 			input.value = numberString;
-		}
-
-		var currentRoute = window.location.pathname;
-		if (currentRoute == '/penawaran') {
-			$('#menu-penawaran').addClass('active');
-			$('#menu-dashboard', '#menu-do').removeClass('active');
 		}
 
 		$('#modalAddPenawaran, #modalEditPenawaran').on('hidden.bs.modal', function() {

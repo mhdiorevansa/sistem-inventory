@@ -68,7 +68,7 @@
 			{{-- modal add delivery order --}}
 			<div class="modal fade" id="modalAddDo" data-bs-backdrop="static" data-bs-keyboard="false" role="dialog"
 				aria-labelledby="modal_addLabel" aria-hidden="true" tabindex="-1">
-				<div class="modal-dialog modal-dialog-centered modal-xl">
+				<div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-xl">
 					<div class="modal-content px-2">
 						<div class="modal-header">
 							<h1 class="modal-title fs-5" id="staticBackdropLabel">Tambah Deliver Order</h1>
@@ -85,23 +85,23 @@
 								</div>
 								<div id="input-container">
 									<div class="row mb-3">
-										<div class="col-3">
+										<div class="col-md-3 col-6 mb-md-0 mb-2">
 											<label class="form-label" for="kode_barang">Kode</label>
 											<input class="form-control" name="kode_barang[]" type="number">
 										</div>
-										<div class="col-3">
+										<div class="col-md-3 col-6 mb-md-0 mb-2">
 											<label class="form-label" for="nama_barang">Nama Barang</label>
 											<input class="form-control" name="nama_barang[]" type="text">
 										</div>
-										<div class="col-2">
+										<div class="col-md-2 col-6 mb-md-0 mb-2">
 											<label class="form-label" for="satuan_barang">Satuan</label>
 											<input class="form-control" name="satuan_barang[]" type="text">
 										</div>
-										<div class="col-2">
+										<div class="col-md-2 col-6 mb-md-0 mb-2">
 											<label class="form-label" for="qty_barang">Qty</label>
 											<input class="form-control" name="qty_barang[]" type="number">
 										</div>
-										<div class="col-2">
+										<div class="col-md-2 col-12 mb-md-0 mb-2">
 											<label class="form-label" for="keterangan">Keterangan</label>
 											<input class="form-control" name="keterangan[]" type="text">
 										</div>
@@ -111,6 +111,33 @@
 									<a class="text-primary text-decoration-none" id="add-row" href="javascript:void(0)">+
 										Tambah
 										baris</a>
+								</div>
+								<hr>
+								<div class="row mb-3">
+									<div class="col-4 mb-2">
+										<label class="form-label" for="no_surat_jalan">No Surat Jalan</label>
+										<input class="form-control" id="nomor-surat-jalan" name="no_surat_jalan" type="text">
+									</div>
+									<div class="col-4 mb-2">
+										<label class="form-label" for="no_invoice">Nomor Invoice</label>
+										<input class="form-control" name="no_invoice" id="nomor-surat-invoice" type="text">
+									</div>
+									<div class="col-4 mb-2">
+										<label class="form-label" for="tanggal_do">Tanggal</label>
+										<input class="form-control" name="tanggal_do" type="date">
+									</div>
+									<div class="col-4 mb-2">
+										<label class="form-label" for="no_po">No PO</label>
+										<input class="form-control" name="no_po" type="number">
+									</div>
+									<div class="col-4 mb-2">
+										<label class="form-label" for="dikirim_dengan">Dikirim Dengan</label>
+										<input class="form-control" name="dikirim_dengan" type="text">
+									</div>
+									<div class="col-4 mb-2">
+										<label class="form-label" for="no_polisi">Nomor Polisi</label>
+										<input class="form-control" name="no_polisi" type="text">
+									</div>
 								</div>
 								<button class="btn btn-primary align-items-center d-flex gap-2" id="button-tambah-perusahaan" type="submit">
 									<span>Tambah Data</span>
@@ -125,54 +152,55 @@
 	</div>
 
 	<script>
-		let tableDo = $('#perusahaan-table').DataTable({
-			processing: true,
-			serverSide: true,
-			searching: true,
-			responsive: false,
-			ajax: "delivery-order/get-perusahaan",
-			columns: [{
-					data: "DT_RowIndex",
-					name: "DT_RowIndex",
-					className: 'text-start',
-					orderable: false,
-					searchable: false,
-				},
-				{
-					data: 'nama_perusahaan',
-					name: 'nama_perusahaan',
-					className: 'text-start',
-				},
-				{
-					data: 'alamat',
-					name: 'alamat',
-					className: 'text-start',
-					render: function(data, type, row) {
-						return row.alamat ?? '-';
-					}
-				},
-				{
-					data: 'no_hp',
-					name: 'no_hp',
-					className: 'text-start',
-					render: function(data, type, row) {
-						return row.no_hp ?? '-';
-					}
-				},
-				{
-					data: 'npwp',
-					name: 'npwp',
-					className: 'text-start',
-					render: function(data, type, row) {
-						return row.no_hp ?? '-';
-					}
-				},
-				{
-					"orderable": false,
-					"searchable": false,
-					"data": null,
-					"render": function(data, type, row, meta) {
-						var html = `
+		$(document).ready(function() {
+			let tableDo = $('#perusahaan-table').DataTable({
+				processing: true,
+				serverSide: true,
+				searching: true,
+				responsive: false,
+				ajax: "delivery-order/get-perusahaan",
+				columns: [{
+						data: "DT_RowIndex",
+						name: "DT_RowIndex",
+						className: 'text-start',
+						orderable: false,
+						searchable: false,
+					},
+					{
+						data: 'nama_perusahaan',
+						name: 'nama_perusahaan',
+						className: 'text-start',
+					},
+					{
+						data: 'alamat',
+						name: 'alamat',
+						className: 'text-start',
+						render: function(data, type, row) {
+							return row.alamat ?? '-';
+						}
+					},
+					{
+						data: 'no_hp',
+						name: 'no_hp',
+						className: 'text-start',
+						render: function(data, type, row) {
+							return row.no_hp ?? '-';
+						}
+					},
+					{
+						data: 'npwp',
+						name: 'npwp',
+						className: 'text-start',
+						render: function(data, type, row) {
+							return row.no_hp ?? '-';
+						}
+					},
+					{
+						"orderable": false,
+						"searchable": false,
+						"data": null,
+						"render": function(data, type, row, meta) {
+							var html = `
 							<div class="dropstart">
 								<button type="button" class="dropdown-toggle border-0 bg-transparent" data-bs-toggle="dropdown" aria-expanded="false">
 									<i class="bi bi-three-dots"></i>
@@ -186,21 +214,50 @@
 									<li><a class="text-danger w-100 text-decoration-none d-block" title="hapus data" href="javascript:void(0);" onclick="deleteData('${row.id}')">Hapus</a></li>
 								</ul>
 							</div>`;
-						return html;
-					},
-					className: 'text-center'
-				}
+							return html;
+						},
+						className: 'text-center'
+					}
 
-			],
-			"initComplete": function(settings, json) {
-				$('[data-kt-menu]').each(function() {
-					var menu = new KTMenu(this);
-				});
-			},
-			columnDefs: [{
-				responsivePriority: 1,
-				targets: [0, -1],
-			}],
+				],
+				"initComplete": function(settings, json) {
+					$('[data-kt-menu]').each(function() {
+						var menu = new KTMenu(this);
+					});
+				},
+				columnDefs: [{
+					responsivePriority: 1,
+					targets: [0, -1],
+				}],
+			});
+
+			$.ajax({
+				url: "delivery-order/no-surat-jalan",
+				type: 'GET',
+				success: function(response) {
+					$('#nomor-surat-jalan').val(response.data);
+				},
+				error: function(xhr, status, error) {
+					console.log('Terjadi kesalahan: ' + error);
+				}
+			});
+
+			$.ajax({
+				url: "delivery-order/no-surat-inv",
+				type: 'GET',
+				success: function(response) {
+					$('#nomor-surat-invoice').val(response.data);
+				},
+				error: function(xhr, status, error) {
+					console.log('Terjadi kesalahan: ' + error);
+				}
+			});
+
+			var currentRoute = window.location.pathname;
+			if (currentRoute == '/delivery-order') {
+				$('#menu-do').addClass('active');
+				$('#menu-penawaran', '#menu-dashboard').removeClass('active');
+			}
 		});
 
 		$('#button-modal-tmbh-perusahaan').on('click', function() {
@@ -309,23 +366,23 @@
 		$('#add-row').on('click', function() {
 			const newRow = `
 			<div class="row mb-3">
-					<div class="col-3">
+					<div class="col-md-3 col-6 mb-2 mb-md-0">
 						<label class="form-label" for="kode_barang">Kode</label>
 						<input class="form-control" name="kode_barang[]" type="number">
 					</div>
-					<div class="col-3">
+					<div class="col-md-3 col-6 mb-2 mb-md-0">
 						<label class="form-label" for="nama_barang">Nama Barang</label>
 						<input class="form-control" name="nama_barang[]" type="text">
 					</div>
-					<div class="col-2">
+					<div class="col-md-2 col-6 mb-2 mb-md-0">
 						<label class="form-label" for="satuan_barang">Satuan</label>
 						<input class="form-control" name="satuan_barang[]" type="text">
 					</div>
-					<div class="col-2">
+					<div class="col-md-2 col-6 mb-2 mb-md-0">
 						<label class="form-label" for="qty_barang">Qty</label>
 						<input class="form-control" name="qty_barang[]" type="number">
 					</div>
-					<div class="col-2">
+					<div class="col-md-2 col-12 mb-2 mb-md-0">
 						<label class="form-label" for="keterangan">Keterangan</label>
 						<input class="form-control" name="keterangan[]" type="text">
 					</div>
@@ -345,12 +402,6 @@
 		// 	let data = e.params.data.id;
 		// 	console.log(data)
 		// });
-
-		var currentRoute = window.location.pathname;
-		if (currentRoute == '/delivery-order') {
-			$('#menu-do').addClass('active');
-			$('#menu-penawaran', '#menu-dashboard').removeClass('active');
-		}
 
 		$('#modalAddPerusahaan').on('hidden.bs.modal', function() {
 			$('body').css('overflow', 'auto');
