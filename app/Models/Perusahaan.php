@@ -11,4 +11,9 @@ class Perusahaan extends Model
 
     protected $table = 'perusahaan';
     protected $fillable = ['id', 'alamat', 'nama_perusahaan', 'no_hp', 'npwp'];
+
+    public function orderItems()
+    {
+        return $this->hasMany(OrderItems::class);
+    }
 }

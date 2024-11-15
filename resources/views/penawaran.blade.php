@@ -122,8 +122,9 @@
 	</div>
 
 	<script>
+		let tablePenawaran;
 		$(document).ready(function() {
-			let tablePenawaran = $('#penawaran-table').DataTable({
+			tablePenawaran = $('#penawaran-table').DataTable({
 				processing: true,
 				serverSide: true,
 				searching: true,

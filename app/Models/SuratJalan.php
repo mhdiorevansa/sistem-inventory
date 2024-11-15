@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class SuratJalan extends Model
 {
@@ -18,4 +19,9 @@ class SuratJalan extends Model
         'transportasi_kirim',
         'nomor_polisi'
     ];
+
+    public function order_items(): HasMany
+    {
+        return $this->hasMany(OrderItems::class, 'surat_jalan_id', 'id');
+    }
 }
