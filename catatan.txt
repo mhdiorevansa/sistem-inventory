@@ -1,0 +1,4 @@
+1. 1 do ada berapa item
+2. 1 inv ada beberapa PO/DO
+3. baris inv berdasarkan nomor inv diawal
+4. Total invoice jadi pemasukan dan pemesanan jadi pengeluaran

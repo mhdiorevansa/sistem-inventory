@@ -1,6 +1,11 @@
 @extends('layout.main-layout')
 @section('content')
 	<div id="main">
+		<header class="mb-3">
+			<a class="burger-btn d-block d-xl-none" href="#">
+				<i class="bi bi-justify fs-3"></i>
+			</a>
+		</header>
 		<div class="page-heading">
 			<h3 class="mb-3">Delivery Order</h3>
 			<hr>
@@ -98,10 +103,16 @@
 					<tbody></tbody>
 				</table>
 			</div>
-			<h4 class="mb-3">Daftar Delivery Order</h4>
-			<button class="btn btn-primary d-flex align-items-start mb-4 gap-2" id="button-modal-tmbh-do" type="button">
-				<span>Tambah Data</span>
-			</button>
+			<h4 class="mb-3">Daftar Do</h4>
+			<div class="d-flex justify-content-between mb-3 align-items-center flex-wrap gap-2">
+				<button class="btn btn-primary d-flex align-items-start mb-4 gap-2" id="button-modal-tmbh-do" type="button">
+					<span>Tambah Data</span>
+				</button>
+				<div class="d-flex align-items-center mt-3 gap-2">
+					<label class="mb-0" for="filter_do" style="flex-shrink: 0; min-width: 15px;">Filter Tanggal:</label>
+					<input class="form-control" id="filter_do" name="filter_do" type="date">
+				</div>
+			</div>
 			<div class="table-responsive mb-3">
 				<table class="table-striped table" id="do-table">
 					<thead>
@@ -109,7 +120,7 @@
 							<th>no</th>
 							<th>nomor surat jalan</th>
 							<th>pt tujuan</th>
-							<th>cetak invoice</th>
+							<th>cetak do</th>
 							<th>aksi</th>
 						</tr>
 					</thead>
@@ -122,7 +133,7 @@
 				<div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-xl">
 					<div class="modal-content px-2">
 						<div class="modal-header">
-							<h1 class="modal-title fs-5" id="staticBackdropLabel">Tambah Deliver Order</h1>
+							<h1 class="modal-title fs-5" id="staticBackdropLabel">Tambah Invoice</h1>
 							<button class="btn-close" data-bs-dismiss="modal" type="button" aria-label="Close"></button>
 						</div>
 						<div class="modal-body">
@@ -136,13 +147,18 @@
 								</div>
 								<div id="input-container">
 									<div class="row mb-3">
-										<div class="col-md-3 col-6 mb-md-0 mb-2">
+										<div class="col-md-2 col-6 mb-md-0 mb-2">
 											<label class="form-label" for="kode_barang">Kode</label>
 											<input class="form-control" name="kode_barang[]" type="number">
 										</div>
-										<div class="col-md-3 col-6 mb-md-0 mb-2">
+										<div class="col-md-2 col-6 mb-md-0 mb-2">
 											<label class="form-label" for="nama_barang">Nama Barang</label>
 											<input class="form-control" name="nama_barang[]" type="text">
+										</div>
+										<div class="col-md-2 col-6 mb-md-0 mb-2">
+											<label class="form-label" for="add_harga_barang">Harga Barang</label>
+											<input class="form-control" id="add_harga_barang" name="harga_barang[]" type="text"
+												oninput="return formatNumber(this, event)">
 										</div>
 										<div class="col-md-2 col-6 mb-md-0 mb-2">
 											<label class="form-label" for="satuan">Satuan</label>
@@ -218,28 +234,7 @@
 									</select>
 								</div>
 								<div id="input-container-edit">
-									<div class="row mb-3">
-										<div class="col-md-3 col-6 mb-md-0 mb-2">
-											<label class="form-label" for="kode_barang">Kode</label>
-											<input class="form-control" id="kode_barang_edit" name="kode_barang[]" type="number">
-										</div>
-										<div class="col-md-3 col-6 mb-md-0 mb-2">
-											<label class="form-label" for="nama_barang">Nama Barang</label>
-											<input class="form-control" id="nama_barang_edit" name="nama_barang[]" type="text">
-										</div>
-										<div class="col-md-2 col-6 mb-md-0 mb-2">
-											<label class="form-label" for="satuan">Satuan</label>
-											<input class="form-control" id="satuan_edit" name="satuan[]" type="text">
-										</div>
-										<div class="col-md-2 col-6 mb-md-0 mb-2">
-											<label class="form-label" for="jumlah_barang">Qty</label>
-											<input class="form-control" id="jumlah_barang_edit" name="jumlah_barang[]" type="number">
-										</div>
-										<div class="col-md-2 col-12 mb-md-0 mb-2">
-											<label class="form-label" for="keterangan">Keterangan</label>
-											<input class="form-control" id="keterangan_edit" name="keterangan[]" type="text">
-										</div>
-									</div>
+									{{-- konten edit do --}}
 								</div>
 								<div class="col-12 d-flex justify-content-end my-2 gap-3">
 									<a class="text-primary text-decoration-none" id="add-row-edit" href="javascript:void(0)">+
@@ -311,7 +306,10 @@
 						name: 'alamat',
 						className: 'text-start',
 						render: function(data, type, row) {
-							return row.alamat ?? '-';
+							const alamat = row.alamat ??
+								'';
+							return alamat.length > 70 ? alamat.substring(0, 70) + '...' : alamat ||
+								'-';
 						}
 					},
 					{
@@ -381,15 +379,15 @@
 					},
 					{
 						data: 'nomor_surat_jalan',
-						name: 'nomor_surat_jalan',
+						name: 'surat_jalan.nomor_surat_jalan',
 						className: 'text-start',
 					},
 					{
 						data: 'nama_perusahaan',
-						name: 'nama_perusahaan',
+						name: 'perusahaan.nama_perusahaan',
 						className: 'text-start',
 						render: function(data, type, row) {
-							return row.nama_perusahaan ?? '-';
+							return data ?? '-';
 						}
 					},
 					{
@@ -398,7 +396,7 @@
 						"data": null,
 						"render": function(data, type, row, meta) {
 							return `
-							<button class="btn btn-danger" onclick="deleteData('${row.id}')">Cetak Invoice</button>
+							<button class="btn btn-danger" onclick="cetakDo('${row.surat_jalan_id}')">Cetak</button>
 							`
 						},
 						className: 'text-center'
@@ -415,11 +413,11 @@
 								</button>
 								<ul class="dropdown-menu py-2 px-3">
 									<li class="mb-2"">
-										<a class="text-black w-100 text-decoration-none d-block" title="edit data" href="javascript:void(0);" onclick="editDataDo('${row.id}')">
+										<a class="text-black w-100 text-decoration-none d-block" title="edit data" href="javascript:void(0);" onclick="editDataDo('${row.surat_jalan_id}')">
 											Edit
 										</a>
 									</li>
-									<li><a class="text-danger w-100 text-decoration-none d-block" title="hapus data" href="javascript:void(0);" onclick="deleteDataDo('${row.id}')">Hapus</a></li>
+									<li><a class="text-danger w-100 text-decoration-none d-block" title="hapus data" href="javascript:void(0);" onclick="deleteDataDo('${row.surat_jalan_id}')">Hapus</a></li>
 								</ul>
 							</div>`;
 							return html;
@@ -463,9 +461,25 @@
 			var currentRoute = window.location.pathname;
 			if (currentRoute == '/delivery-order') {
 				$('#menu-do').addClass('active');
-				$('#menu-penawaran', '#menu-dashboard').removeClass('active');
+				$('#menu-penawaran', '#menu-dashboard', '#menu-invoice','#menu-exportsql','#menu-pembelian-barang').removeClass('active');
 			}
 		});
+
+		$('#filter_do').on('change', function() {
+			let currentUrl = 'delivery-order/get-do';
+			let date = $('#filter_do').val();
+			let newUrl = currentUrl + "?do_filter=" + date;
+			tableDo.ajax.url(newUrl).load(function() {
+				$('[data-kt-menu]').each(function() {
+					var menu = new KTMenu(this);
+				});
+			});
+		});
+
+		function cetakDo(id) {
+			let newUrl = 'delivery-order/cetak-do/' + id;
+			window.open(newUrl, '_blank');
+		}
 
 		$('#button-modal-tmbh-perusahaan').on('click', function() {
 			$('#modalAddPerusahaan').modal('show');
@@ -601,13 +615,17 @@
 		$('#add-row').on('click', function() {
 			const newRow = `
 			<div class="row mb-3">
-					<div class="col-md-3 col-6 mb-2 mb-md-0">
+					<div class="col-md-2 col-6 mb-2 mb-md-0">
 						<label class="form-label" for="kode_barang">Kode</label>
 						<input class="form-control" name="kode_barang[]" id="kode_barang" type="number">
 					</div>
-					<div class="col-md-3 col-6 mb-2 mb-md-0">
+					<div class="col-md-2 col-6 mb-2 mb-md-0">
 						<label class="form-label" for="nama_barang">Nama Barang</label>
 						<input class="form-control" name="nama_barang[]" id="nama_barang" type="text">
+					</div>
+					<div class="col-md-2 col-6 mb-md-0 mb-2">
+						<label class="form-label" for="harga_barang">Harga Barang</label>
+						<input class="form-control" id="harga_barang_add_row" name="harga_barang[]" type="text" oninput="return formatNumber(this, event)">
 					</div>
 					<div class="col-md-2 col-6 mb-2 mb-md-0">
 						<label class="form-label" for="satuan">Satuan</label>
@@ -631,13 +649,17 @@
 		$('#add-row-edit').on('click', function() {
 			const newRow = `
 			<div class="row mb-3">
-					<div class="col-md-3 col-6 mb-2 mb-md-0">
+					<div class="col-md-2 col-6 mb-2 mb-md-0">
 						<label class="form-label" for="kode_barang">Kode</label>
 						<input class="form-control" name="kode_barang[]" id="kode_barang_edit" type="number">
 					</div>
-					<div class="col-md-3 col-6 mb-2 mb-md-0">
+					<div class="col-md-2 col-6 mb-2 mb-md-0">
 						<label class="form-label" for="nama_barang">Nama Barang</label>
 						<input class="form-control" name="nama_barang[]" id="nama_barang_edit" type="text">
+					</div>
+					<div class="col-md-2 col-6 mb-md-0 mb-2">
+						<label class="form-label" for="harga_barang">Harga Barang</label>
+						<input class="form-control" id="harga_barang_edit_add_row" name="harga_barang[]" type="text" oninput="return formatNumber(this, event)">
 					</div>
 					<div class="col-md-2 col-6 mb-2 mb-md-0">
 						<label class="form-label" for="satuan">Satuan</label>
@@ -658,7 +680,11 @@
 			$('#input-container-edit').append(newRow);
 		});
 
-		$('#input-container, #input-container-edit').on('click', '.remove-row', function() {
+		$('#input-container').on('click', '.remove-row', function() {
+			$(this).closest('.row').remove();
+		});
+
+		$('#input-container-edit').on('click', '.remove-row', function() {
 			$(this).closest('.row').remove();
 		});
 
@@ -666,83 +692,6 @@
 		// 	let data = e.params.data.id;
 		// 	console.log(data)
 		// });
-
-		$('#tambah-do').on('submit', function(e) {
-			e.preventDefault();
-			$('#button-tambah-do').attr('disabled', true);
-			let formData = new FormData(this);
-			$.ajax({
-				headers: {
-					"X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
-				},
-				cache: false,
-				contentType: false,
-				processData: false,
-				method: "POST",
-				url: "delivery-order/create-do",
-				data: formData,
-				dataType: "json",
-				success: function(response) {
-					if (response.status == 'success') {
-						const Toast = Swal.mixin({
-							toast: true,
-							position: "top-end",
-							showConfirmButton: false,
-							timer: 2000,
-							timerProgressBar: true,
-							didOpen: (toast) => {
-								toast.onmouseenter = Swal.stopTimer;
-								toast.onmouseleave = Swal.resumeTimer;
-							},
-						});
-						Toast.fire({
-							icon: "success",
-							title: response.message,
-						});
-						$('#modalAddDo').modal('hide');
-						$('.modal-backdrop.fade.show').remove();
-						$('#tambah-do')[0].reset();
-						tableDo.ajax.reload(null, false);
-					} else {
-						const Toast = Swal.mixin({
-							toast: true,
-							position: "top-end",
-							showConfirmButton: false,
-							timer: 2000,
-							timerProgressBar: true,
-							didOpen: (toast) => {
-								toast.onmouseenter = Swal.stopTimer;
-								toast.onmouseleave = Swal.resumeTimer;
-							},
-						});
-						Toast.fire({
-							icon: "success",
-							title: response.message,
-						});
-					}
-				},
-				error: function(response) {
-					const Toast = Swal.mixin({
-						toast: true,
-						position: "top-end",
-						showConfirmButton: false,
-						timer: 2000,
-						timerProgressBar: true,
-						didOpen: (toast) => {
-							toast.onmouseenter = Swal.stopTimer;
-							toast.onmouseleave = Swal.resumeTimer;
-						},
-					});
-					Toast.fire({
-						icon: "error",
-						text: "Lengkapi data",
-					});
-				},
-				complete: function() {
-					$('#button-tambah-do').attr('disabled', false);
-				}
-			});
-		});
 
 		function editDataPerusahaan(id) {
 			$.ajax({
@@ -920,6 +869,108 @@
 			});
 		}
 
+		function updateNomorSurat() {
+			$.ajax({
+				url: "delivery-order/no-surat-jalan",
+				type: 'GET',
+				success: function(response) {
+					$('#nomor-surat-jalan').val(response.data);
+				},
+				error: function(xhr, status, error) {
+					console.log('Terjadi kesalahan: ' + error);
+				}
+			});
+
+			$.ajax({
+				url: "delivery-order/no-surat-inv",
+				type: 'GET',
+				success: function(response) {
+					$('#nomor-surat-invoice').val(response.data);
+				},
+				error: function(xhr, status, error) {
+					console.log('Terjadi kesalahan: ' + error);
+				}
+			});
+		}
+
+		$('#tambah-do').on('submit', function(e) {
+			e.preventDefault();
+			$('#button-tambah-do').attr('disabled', true);
+			let formData = new FormData(this);
+			$.ajax({
+				headers: {
+					"X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+				},
+				cache: false,
+				contentType: false,
+				processData: false,
+				method: "POST",
+				url: "delivery-order/create-do",
+				data: formData,
+				dataType: "json",
+				success: function(response) {
+					if (response.status == 'success') {
+						const Toast = Swal.mixin({
+							toast: true,
+							position: "top-end",
+							showConfirmButton: false,
+							timer: 2000,
+							timerProgressBar: true,
+							didOpen: (toast) => {
+								toast.onmouseenter = Swal.stopTimer;
+								toast.onmouseleave = Swal.resumeTimer;
+							},
+						});
+						Toast.fire({
+							icon: "success",
+							title: response.message,
+						});
+						$('#modalAddDo').modal('hide');
+						$('.modal-backdrop.fade.show').remove();
+						$('#tambah-do')[0].reset();
+						tableDo.ajax.reload(null, false);
+						updateNomorSurat();
+					} else {
+						const Toast = Swal.mixin({
+							toast: true,
+							position: "top-end",
+							showConfirmButton: false,
+							timer: 2000,
+							timerProgressBar: true,
+							didOpen: (toast) => {
+								toast.onmouseenter = Swal.stopTimer;
+								toast.onmouseleave = Swal.resumeTimer;
+							},
+						});
+						Toast.fire({
+							icon: "error",
+							title: response.message,
+						});
+					}
+				},
+				error: function(response) {
+					const Toast = Swal.mixin({
+						toast: true,
+						position: "top-end",
+						showConfirmButton: false,
+						timer: 2000,
+						timerProgressBar: true,
+						didOpen: (toast) => {
+							toast.onmouseenter = Swal.stopTimer;
+							toast.onmouseleave = Swal.resumeTimer;
+						},
+					});
+					Toast.fire({
+						icon: "error",
+						text: "Terjadi kesalahan",
+					});
+				},
+				complete: function() {
+					$('#button-tambah-do').attr('disabled', false);
+				}
+			});
+		});
+
 		function editDataDo(id) {
 			$.ajax({
 				url: `/delivery-order/edit-do/${id}`,
@@ -943,14 +994,19 @@
 							data.forEach((itemData) => {
 								$('#input-container-edit').append(`
                            <div class="row mb-3">
-                              <div class="col-md-3 col-6 mb-md-0 mb-2">
+                              <div class="col-md-2 col-6 mb-md-0 mb-2">
                                  <label class="form-label">Kode</label>
                                  <input class="form-control" name="kode_barang[]" type="number" value="${itemData.kode_barang}">
                               </div>
-                              <div class="col-md-3 col-6 mb-md-0 mb-2">
+                              <div class="col-md-2 col-6 mb-md-0 mb-2">
                                  <label class="form-label">Nama Barang</label>
                                  <input class="form-control" name="nama_barang[]" type="text" value="${itemData.nama_barang}">
                               </div>
+										<div class="col-md-2 col-6 mb-md-0 mb-2">
+											<label class="form-label" for="harga_barang">Harga Barang</label>
+											<input class="form-control" id="harga_barang_edit" name="harga_barang[]" type="text"
+												oninput="return formatNumber(this, event)" value="${(itemData.harga_barang || 0).toLocaleString('id-ID')}">
+										</div>
                               <div class="col-md-2 col-6 mb-md-0 mb-2">
                                  <label class="form-label">Satuan</label>
                                  <input class="form-control" name="satuan[]" type="text" value="${itemData.satuan}">
@@ -999,7 +1055,7 @@
 				data: formdata,
 				dataType: 'json',
 				success: function(response) {
-					if (response.status == 'success') {
+					if (response.status === 'success') {
 						const Toast = Swal.mixin({
 							toast: true,
 							position: "top-end",
@@ -1018,6 +1074,7 @@
 						$('#modalEditDo').modal('hide');
 						$('.modal-backdrop.fade.show').remove();
 						$('#edit-do')[0].reset();
+						$('#perusahaan_id_edit').val(null).trigger('change');
 						tableDo.ajax.reload(null, false);
 					} else {
 						const Toast = Swal.mixin({
@@ -1038,7 +1095,21 @@
 					}
 				},
 				error: function(response) {
-					errorAjaxResponse(response);
+					const Toast = Swal.mixin({
+						toast: true,
+						position: "top-end",
+						showConfirmButton: false,
+						timer: 2000,
+						timerProgressBar: true,
+						didOpen: (toast) => {
+							toast.onmouseenter = Swal.stopTimer;
+							toast.onmouseleave = Swal.resumeTimer;
+						},
+					});
+					Toast.fire({
+						icon: "error",
+						text: "Lengkapi data",
+					});
 				},
 				complete: function() {
 					$('#button-edit-do').attr('disabled', false);
@@ -1087,7 +1158,6 @@
 									icon: "success",
 									title: response.message,
 								});
-								tablePerusahaan.ajax.reload(null, false);
 								tableDo.ajax.reload(null, false);
 							} else {
 								const Toast = Swal.mixin({
@@ -1113,6 +1183,12 @@
 					});
 				}
 			});
+		}
+
+		function formatNumber(input) {
+			var inputVal = input.value.replace(/[^,\d]/g, '');
+			var numberString = inputVal.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+			input.value = numberString;
 		}
 
 		$('#modalAddPerusahaan, #modalAddDo, #modalEditPerusahaan, #modalEditDo').on('hidden.bs.modal', function() {

@@ -5,7 +5,7 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta http-equiv="X-UA-Compatible" content="ie=edge">
-		<title>Laporan Penawaran</title>
+		<title>Laporan Pembelian</title>
 		<style>
 			table {
 				width: 100%;
@@ -28,47 +28,39 @@
 	</head>
 
 	<body style="margin: 1cm;">
-		<h3>Laporan Penawaran : {{ $dateFilter }}</h3>
-		<table>
+		<h3>Laporan Pembelian : {{ $dateFilter }}</h3>
+		<table style="border-collapse: collapse;">
 			<thead>
 				<tr>
 					<th>No</th>
 					<th>Item</th>
 					<th>Qty</th>
-					<th>Belanja</th>
-					<th>Ongkir</th>
+					<th>Satuan</th>
+					<th>Harga</th>
 					<th>Total</th>
-					<th>Net</th>
-					<th>Penawaran</th>
-					<th>Untung</th>
-					<th>Untung Belanja</th>
-					<th>Ariba</th>
 				</tr>
 			</thead>
 			<tbody>
-				@if (empty($penawaran) || $penawaran->isEmpty())
+				@if (empty($pembelian) || $pembelian->isEmpty())
 					<tr>
-						<td style="text-align: center;" colspan="11">Data tidak tersedia</td>
+						<td style="text-align: center" colspan="6">Data tidak tersedia</td>
 					</tr>
 				@else
-					@foreach ($penawaran as $item)
+					@foreach ($pembelian as $item)
 						<tr>
 							<td>{{ $loop->iteration }}</td>
 							<td>{{ $item->nama_item }}</td>
 							<td>{{ $item->qty }}</td>
-							<td>{{ number_format($item->belanja, 0, ',', '.') }}</td>
-							<td>{{ number_format($item->ongkir, 0, ',', '.') }}</td>
+                     <td>{{ $item->satuan }}</td>
+							<td>{{ number_format($item->harga_item, 0, ',', '.') }}</td>
 							<td>{{ number_format($item->total, 0, ',', '.') }}</td>
-							<td>{{ number_format($item->net, 0, ',', '.') }}</td>
-							<td>{{ number_format($item->penawaran, 0, ',', '.') }}</td>
-							<td>{{ number_format($item->untung, 0, ',', '.') }}</td>
-							<td>{{ number_format($item->untung_belanja, 0, ',', '.') }}</td>
-							<td>{{ number_format($item->ariba, 0, ',', '.') }}</td>
 						</tr>
 					@endforeach
 				@endif
+            <tr>
+               <th colspan="6" style="border-top: 1px solid black;">Grand Total : Rp. {{ number_format($pembelian->sum('total'), 0, ',', '.') }}</th>
+            </tr>
 			</tbody>
-
 		</table>
 	</body>
 

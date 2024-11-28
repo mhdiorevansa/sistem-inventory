@@ -103,7 +103,7 @@
 						<ul class="menu">
 							<li class="sidebar-title">Menu</li>
 							<li class="sidebar-item" id="menu-dashboard">
-								<a class='sidebar-link' href="/">
+								<a class='sidebar-link' href="/dashboard">
 									<i class="bi bi-grid-fill"></i>
 									<span>Dashboard</span>
 								</a>
@@ -118,6 +118,24 @@
 								<a class='sidebar-link' href="/delivery-order">
 									<i class="bi bi-truck"></i>
 									<span>Delivery Order</span>
+								</a>
+							</li>
+							<li class="sidebar-item" id="menu-invoice">
+								<a class='sidebar-link' href="/invoice">
+									<i class="bi bi-receipt"></i>
+									<span>Invoice</span>
+								</a>
+							</li>
+							<li class="sidebar-item" id="menu-pembelian-barang">
+								<a class='sidebar-link' href="/pembelian-barang">
+									<i class="bi bi-bag"></i>
+									<span>Pembelian Barang</span>
+								</a>
+							</li>
+							<li class="sidebar-item" id="menu-exportsql">
+								<a class='sidebar-link' href="/export-database">
+									<i class="bi bi-database-up"></i>
+									<span>Export Database</span>
 								</a>
 							</li>
 						</ul>
@@ -136,6 +154,7 @@
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
 			integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous">
 		</script>
+		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 		<script src="{{ asset('js/dark.js') }}"></script>
 		<script src="{{ asset('js/perfect-scrollbar.min.js') }}"></script>
