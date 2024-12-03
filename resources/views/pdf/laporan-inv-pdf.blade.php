@@ -7,16 +7,6 @@
 		<meta http-equiv="X-UA-Compatible" content="ie=edge">
 		<title>Cetak Invoice</title>
 		<style type="text/css">
-			.page-red-border {
-				border: 5px solid red;
-				padding: 10px;
-			}
-
-			.page-black-border {
-				border: 5px solid black;
-				padding: 10px;
-			}
-
 			h1 {
 				color: black;
 				font-family: "Times New Roman", serif;
@@ -108,11 +98,10 @@
 				font-size: 10pt;
 			}
 
-			table {
+			/* table {
 				table-layout: fixed;
 				width: 100%;
-			}
-
+			} */
 			td {
 				word-wrap: break-word;
 				word-break: break-word;
@@ -126,7 +115,7 @@
 		</style>
 	</head>
 
-	<body style="margin: 0.3in;">
+	<body style="margin: 1cm;">
 		<h1 style="text-align: center;">PT. KAISAR SINAR SAMUDERA</h1>
 		<div style="line-height: 160%;text-align: center;margin-top: -18pt;">
 			<h4>KO. PERMATA
@@ -155,67 +144,66 @@
 		<p style="text-align: center;">{{ $data->nomor_invoice }}</p>
 		<p style="text-indent: 0pt;text-align: left;"><br /></p>
 		<table style="border-collapse: collapse;" cellspacing="0">
-			<tr style="height:22pt">
-				<td
-					style="width:68pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-					<p class="s2" style="padding-left: 5pt;text-indent: 0pt;text-align: left;">Po Number</p>
-				</td>
-				<td
-					style="width:145pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-					<p class="s2" style="padding-left: 5pt;text-indent: 0pt;text-align: left;">Description</p>
-				</td>
-				<td
-					style="width:62pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-					<p class="s2" style="padding-left: 5pt;text-indent: 0pt;text-align: left;">Quantity</p>
-				</td>
-				<td
-					style="width:91pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-					<p class="s2" style="padding-left: 5pt;text-indent: 0pt;text-align: left;">Harga</p>
-				</td>
-				<td
-					style="width:81pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-					<p class="s2" style="padding-left: 5pt;text-indent: 0pt;text-align: left;">Grand Total</p>
-				</td>
-			</tr>
+			<thead>
+				<tr>
+					<td
+						style="width:60pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+						<p class="s2" style="padding-left: 5pt;text-indent: 0pt;text-align: left;">Po Number</p>
+					</td>
+					<td
+						style="width:145pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+						<p class="s2" style="padding-left: 5pt;text-indent: 0pt;text-align: left;">Description</p>
+					</td>
+					<td
+						style="width:62pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+						<p class="s2" style="padding-left: 5pt;text-indent: 0pt;text-align: left;">Quantity</p>
+					</td>
+					<td
+						style="width:91pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+						<p class="s2" style="padding-left: 5pt;text-indent: 0pt;text-align: left;">Harga</p>
+					</td>
+					<td
+						style="width:81pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+						<p class="s2" style="padding-left: 5pt;text-indent: 0pt;text-align: left;">Grand Total</p>
+					</td>
+				</tr>
+			</thead>
 			<tbody>
 				@foreach ($manyData as $item)
-					<tr style="height:27pt;page-break-inside: avoid;">
-						<td
-							style="width:68pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-							<p class="s3" style="padding-left: 5pt;text-indent: 0pt;text-align: left;">{{ $item->nomor_po }}</p>
+					<tr>
+						<td style="width:60pt; border-left:solid 1pt; border-right:solid 1pt; border-bottom:solid 1pt;">
+							<p class="s3" style="padding-left: 5pt; text-indent: 0pt; text-align: left; ">
+								{{ $item->nomor_po }}
+							</p>
 						</td>
-						<td
-							style="width:145pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-							<p class="s3" style="padding-left: 5pt;text-indent: 0pt;text-align: left;">{{ $item->nama_barang }}</p>
+						<td style="width:145pt; border:solid 1pt;">
+							<p class="s3" style="padding-left: 5pt; text-indent: 0pt; text-align: left;">
+								{{ $item->nama_barang }}
+							</p>
 						</td>
-						<td
-							style="width:62pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-							<p class="s3" style="padding-left: 5pt;text-indent: 0pt;text-align: left;">{{ $item->jumlah_barang }}
-								{{ strtoupper($item->satuan) }}</p>
+						<td style="width:62pt; border:solid 1pt;">
+							<p class="s3" style="padding-left: 5pt; text-indent: 0pt; text-align: left;">
+								{{ $item->jumlah_barang }} {{ strtoupper($item->satuan) }}
+							</p>
 						</td>
-						<td
-							style="width:91pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:none;border-bottom-width:0pt;border-right-style:solid;border-right-width:1pt">
-							<p class="s3" style="padding-left: 5pt;text-indent: 0pt;text-align: left;">
-								{{ 'Rp. ' . number_format($item->harga_barang, 0, ',', '.') }}</p>
+						<td style="width:91pt; border:solid 1pt;">
+							<p class="s3" style="padding-left: 5pt; text-indent: 0pt; text-align: left;">
+								{{ 'Rp. ' . number_format($item->harga_barang, 0, ',', '.') }}
+							</p>
 						</td>
 						@if ($loop->first)
-							<td
-								style="width:91pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:none;border-bottom-width:0pt;border-right-style:solid;border-right-width:1pt;">
-								<p class="s3" style="padding-left: 5pt;text-indent: 0pt;text-align: left;">
-									{{ 'Rp. ' . number_format($totalHargaBarang, 0, ',', '.') }}
-								</p>
+							<td style="width:91pt;border-right:solid 1pt;">
+								<p class="s3" style="padding-left: 5pt; text-indent: 0pt; text-align: left;">
+									{{ 'Rp. ' . number_format($totalHargaBarang, 0, ',', '.') }}</p>
 							</td>
 						@else
-							<td
-								style="width:91pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;">
-							</td>
+							<td style="width:91pt;border-bottom:solid 0pt; border-right: solid 1pt"></td>
 						@endif
-
 					</tr>
 				@endforeach
 			</tbody>
 			<tfoot>
-				<tr style="height:22pt;">
+				<tr>
 					<td
 						style="width:240pt;border-top:1pt solid; border-left:1pt solid; border-bottom:1pt solid; border-right:0pt solid; text-align: left; padding-left: 5pt;"
 						colspan="3">
@@ -229,7 +217,7 @@
 						</p>
 					</td>
 				</tr>
-				<tr style="height:22pt">
+				<tr>
 					<td
 						style="width:68pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
 						<p class="s4" style="padding-left: 5pt;text-indent: 0pt;text-align: left;">Terbilang</p>
@@ -242,39 +230,24 @@
 				</tr>
 			</tfoot>
 		</table>
-		<p style="padding-top: 9pt;text-indent: 0pt;text-align: left;"><br /></p>
-		<div style="border:2.5pt solid #000000;min-height:74.2pt;width:216.0pt;">
+		<p style="padding-top: 9pt;"><br /></p>
+		<div style="border:2.5pt solid #000000;min-height:74.2pt;width:216.0pt;display: inline-block">
 			<p class="s5" style="padding-top: 3pt;padding-left: 7pt;text-indent: 0pt;line-height: 106%;text-align: left;">
 				Mohon untuk mengirimkan pembayaran melalui Bank :</p>
 			<p class="s5" style="padding-top: 8pt;padding-left: 7pt;text-indent: 0pt;line-height: 106%;text-align: left;">
 				BANK
 				MANDIRI : 108-001704835-7 A/N : PT.KAISAR SINAR SAMUDERA</p>
 		</div>
-		<div style="margin-top: -100pt">
+		<div style="margin-top: -85pt;">
 			<p style="padding-left: 258pt;line-height: 170%;text-align: left;">Pangkalan Kerinci, {{ $currentDate }} <br> PT.
 				KAISAR SINAR SAMUDERA</p>
 		</div>
-		<p style="text-indent: 0pt;text-align: left; margin-top: 60pt"><br /></p>
-		<p id="amba" style="padding-left: 320pt;text-indent: -29pt;line-height: 170%;text-align: left;"><u>Raiza elena
+		<p style="text-indent: 0pt;text-align: left; margin-top: 0pt"><br /></p>
+		<p style="padding-left: 320pt;text-indent: -29pt;line-height: 170%;text-align: left;"><u>Raiza elena
 				oktaviana</u>
 			<br>
 			Direktur
 		</p>
-
-		{{-- <script type="text/php">
-        if ( isset($pdf) ) {
-            $x = 50;
-            $y = 18;
-            $text = "{PAGE_NUM} of {PAGE_COUNT}";
-            $font = $fontMetrics->get_font("helvetica", "bold");
-            $size = 6;
-            $color = array(255,0,0);
-            $word_space = 0.0;
-            $char_space = 0.0;
-            $angle = 0.0; 
-            $pdf->page_text($x, $y, $text, $font, $size, $color, $word_space, $char_space, $angle);
-        }
-    </script> --}}
 	</body>
 
 </html>

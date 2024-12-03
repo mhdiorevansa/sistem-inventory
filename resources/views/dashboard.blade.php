@@ -19,7 +19,7 @@
 									<div class="row">
 										<div class="col-md-12">
 											<h5 class="font-semibold" id="title-pemasukan">Total Pemasukan Bulan Ini</h5>
-											<h5 class="mb-0 font-extrabold" id="total-pemasukan">Rp. {{ number_format($totalPemasukan, 0, ',', '.') }}
+											<h5 class="mb-0 font-bold" id="total-pemasukan">Rp. {{ number_format($totalPemasukan, 0, ',', '.') }}
 											</h5>
 										</div>
 									</div>
@@ -32,7 +32,7 @@
 									<div class="row">
 										<div class="col-md-12">
 											<h5 class="font-semibold" id="title-pengeluaran">Total Pengeluaran Bulan Ini</h5>
-											<h5 class="mb-0 font-extrabold" id="total-pengeluaran">Rp. {{ number_format($totalPengeluaran, 0, ',', '.') }}
+											<h5 class="mb-0 font-bold" id="total-pengeluaran">Rp. {{ number_format($totalPengeluaran, 0, ',', '.') }}
 											</h5>
 										</div>
 									</div>
@@ -51,7 +51,7 @@
 											<h5 class="font-semibold" id="title-untungrugi">
 												{{ $untungRugi < 0 ? 'Perusahaan Mengalami Kerugian' : ($untungRugi === 0 ? 'Perusahaan Tidak Ada Keuntungan atau Kerugian' : 'Perusahaan Memiliki Keuntungan') }}
 											</h5>
-											<h5 class="mb-0 font-extrabold" id="total-untungrugi">Rp. {{ number_format($untungRugi, 0, ',', '.') }}
+											<h5 class="mb-0 font-bold" id="total-untungrugi">Rp. {{ number_format($untungRugi, 0, ',', '.') }}
 											</h5>
 										</div>
 									</div>
@@ -106,8 +106,8 @@
 							borderColor: 'rgba(75, 192, 192, 1)',
 							backgroundColor: 'rgba(75, 192, 192, 0.2)',
 							borderWidth: 2,
-							fill: true,
-							tension: 0.4
+							fill: false,
+							// tension: 0.4
 						},
 						{
 							label: 'Pengeluaran',
@@ -115,8 +115,8 @@
 							borderColor: 'rgba(255, 99, 132, 1)',
 							backgroundColor: 'rgba(255, 99, 132, 0.2)',
 							borderWidth: 2,
-							fill: true,
-							tension: 0.4
+							fill: false,
+							// tension: 0.4
 						}
 					]
 				},

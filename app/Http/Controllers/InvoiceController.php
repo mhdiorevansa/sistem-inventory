@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\OrderItems;
+use App\Models\Invoice;
 use App\Models\SuratJalan;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
@@ -19,61 +19,74 @@ class InvoiceController extends Controller
 
     public function getInvoice(Request $request)
     {
-        $data = OrderItems::selectRaw('max(surat_jalan.nomor_invoice) as nomor_invoice, perusahaan.nama_perusahaan, max(surat_jalan.created_at) as created_at, max(surat_jalan.id) as surat_jalan_id')
-            ->join('surat_jalan', 'order_items.surat_jalan_id', '=', 'surat_jalan.id')
-            ->join('perusahaan', 'order_items.perusahaan_id', '=', 'perusahaan.id')
-            ->groupBy('surat_jalan.nomor_invoice', 'perusahaan.nama_perusahaan');
-        if ($request->filled('invoice_filter')) {
-            $data->whereDate('surat_jalan.created_at', $request->invoice_filter);
+        try {
+            $data = Invoice::select('invoice.id as id_invoice', 'invoice.nomor_invoice', 'perusahaan.id as id_perusahaan', 'perusahaan.nama_perusahaan as nama_perusahaan')->join('perusahaan', 'invoice.perusahaan_id', '=', 'perusahaan.id');
+            if ($request->filled('invoice_filter')) {
+                $data->whereDate('invoice.created_at', $request->invoice_filter);
+            }
+            $datatable = DataTables::of($data)
+                ->addIndexColumn()
+                ->make(true);
+            return $datatable;
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal memuat data invoice',
+                'error' => $th->getMessage()
+            ]);
         }
-        $datatable = DataTables::of($data)
-            ->addIndexColumn()
-            ->make(true);
-        return $datatable;
     }
 
     public function cetakInvoice($id)
     {
-        $data = DB::table('surat_jalan')
-            ->join('order_items', 'surat_jalan.id', '=', 'order_items.surat_jalan_id')
-            ->join('perusahaan', 'order_items.perusahaan_id', '=', 'perusahaan.id')
-            ->where('surat_jalan.id', $id)
-            ->select(
-                'surat_jalan.id',
-                'surat_jalan.nomor_invoice',
-                'order_items.perusahaan_id',
-                'perusahaan.nama_perusahaan',
-                'perusahaan.alamat'
-            )
-            ->first();
-        $manyData =
-            DB::table('surat_jalan')
-            ->join('order_items', 'surat_jalan.id', '=', 'order_items.surat_jalan_id')
-            ->join('perusahaan', 'order_items.perusahaan_id', '=', 'perusahaan.id')
-            ->where('surat_jalan.nomor_invoice', $data->nomor_invoice)
-            ->select(
-                'surat_jalan.nomor_invoice',
+        try {
+            $data = Invoice::select('invoice.id as id_invoice', 'invoice.nomor_invoice', 'invoice.do_id', 'perusahaan.id', 'perusahaan.nama_perusahaan', 'perusahaan.alamat')
+            ->where('invoice.id', $id)
+                ->join('perusahaan', 'invoice.perusahaan_id', '=', 'perusahaan.id')
+                ->first();
+
+            if (!$data) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Invoice tidak ditemukan',
+                ]);
+            }
+
+            $orderIds = json_decode($data->do_id);
+            if (empty($orderIds)) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Tidak ada surat jalan terkait dengan invoice ini.',
+                ]);
+            }
+
+            $manyData = DB::table('order_items')
+            ->join('surat_jalan', 'order_items.surat_jalan_id', '=', 'surat_jalan.id')
+            ->whereIn('surat_jalan.id', $orderIds)
+                ->select(
                 'surat_jalan.nomor_po',
-                'surat_jalan.id as surat_jalan_id',
                 'order_items.kode_barang',
                 'order_items.nama_barang',
-                'order_items.harga_barang',
-                'order_items.satuan',
                 'order_items.jumlah_barang',
-                'order_items.keterangan',
-                'perusahaan.nama_perusahaan',
-                'perusahaan.alamat'
+                'order_items.satuan',
+                'order_items.harga_barang'
             )
-            ->orderBy('surat_jalan.id')
-            ->get();
+                ->orderBy('surat_jalan.nomor_po')
+                ->get();
 
-        $totalHargaBarang = $manyData->sum('harga_barang');
-        $angkaTerbilang = $this->formatTerbilangRupiah($totalHargaBarang);
-        $currentDate = Carbon::now()->isoFormat('D MMMM YYYY');
-        $pdf = Pdf::loadView('pdf.laporan-inv-pdf', compact('manyData', 'data', 'totalHargaBarang', 'angkaTerbilang', 'currentDate'));
-        $pdf->set_option('isHtml5ParserEnabled', true);
-        $pdf->set_option("isPhpEnabled", true);
-        return $pdf->stream('laporan-inv.pdf');
+            $totalHargaBarang = $manyData->sum(fn($item) => $item->jumlah_barang * $item->harga_barang);
+            $angkaTerbilang = $this->formatTerbilangRupiah($totalHargaBarang);
+            $bulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+            $currentDate = Carbon::now()->format('d') . ' ' . $bulan[Carbon::now()->format('m') - 1] . ' ' . Carbon::now()->format('Y');
+            $pdf = Pdf::loadView('pdf.laporan-inv-pdf', compact('data', 'manyData', 'totalHargaBarang', 'currentDate', 'angkaTerbilang'));
+            return $pdf->stream('laporan-inv.pdf');
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal mencetak invoice',
+                'error' => $th->getMessage()
+            ]);
+        }
     }
 
     private function terbilang($angka)
@@ -109,5 +122,136 @@ class InvoiceController extends Controller
     private function formatTerbilangRupiah($angka)
     {
         return ucfirst($this->terbilang($angka)) . " rupiah";
+    }
+
+    public function listInvoice(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            $search = $request->input('search');
+            $data = SuratJalan::when($search, function ($query, $search) {
+                return $query->where('nomor_invoice', 'LIKE', "%{$search}%");
+            })
+                ->select('nomor_invoice', DB::raw('MIN(id) as id'))
+                ->groupBy('nomor_invoice')
+                ->get();
+            DB::commit();
+            $response = [
+                'status' => 'success',
+                'data' => $data,
+                'message' => 'List nomor invoice berhasil diload'
+            ];
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            $response = [
+                'status' => 'error',
+                'message' => 'List nomor invoice gagal diload',
+                'error' => $th->getMessage(),
+            ];
+        }
+        return \response()->json($response);
+    }
+
+    public function listDo()
+    {
+        try {
+            $deliveryOrders = DB::table('surat_jalan')
+            ->join('order_items', 'surat_jalan.id', '=', 'order_items.surat_jalan_id')
+            ->select(
+                'surat_jalan.id',
+                'surat_jalan.nomor_surat_jalan',
+                'surat_jalan.nomor_invoice',
+                'surat_jalan.nomor_po',
+                'order_items.kode_barang',
+                'order_items.nama_barang',
+                'order_items.harga_barang',
+                'order_items.satuan',
+                'order_items.jumlah_barang',
+                'order_items.keterangan'
+            )
+                ->whereNotExists(function ($query) {
+                    $query->select(DB::raw(1))
+                        ->from('invoice')
+                        ->whereRaw('JSON_SEARCH(invoice.do_id, \'one\', CAST(surat_jalan.id AS CHAR)) IS NOT NULL');
+                })
+                ->get();
+
+            $response = $deliveryOrders->groupBy('nomor_surat_jalan')->map(function ($items, $nomorSuratJalan) {
+                return [
+                    'nomor_surat_jalan' => $nomorSuratJalan,
+                    'nomor_invoice' => $items->first()->nomor_invoice,
+                    'nomor_po' => $items->first()->nomor_po,
+                    'id' => $items->first()->id,
+                    'items' => $items->map(function ($item) {
+                        return [
+                            'kode_barang' => $item->kode_barang,
+                            'nama_barang' => $item->nama_barang,
+                            'harga_barang' => $item->harga_barang,
+                            'satuan' => $item->satuan,
+                            'jumlah_barang' => $item->jumlah_barang,
+                            'keterangan' => $item->keterangan ?? '-',
+                        ];
+                    }),
+                ];
+            })->values();
+            return response()->json($response);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal load DO',
+                'error' => $th->getMessage(),
+            ]);
+        }
+    }
+
+    public function createInvoice(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            $request->validate([
+                'nomor_invoice' => 'required|string|unique:invoice,nomor_invoice',
+                'perusahaan_id' => 'required',
+                'do_id' => 'required|array',
+            ]);
+            Invoice::create([
+                'nomor_invoice' => $request->nomor_invoice,
+                'perusahaan_id' => $request->perusahaan_id,
+                'do_id' => json_encode($request->do_id)
+            ]);
+            DB::commit();
+            $response = [
+                'status' => 'success',
+                'message' => 'Invoice berhasil dibuat',
+            ];
+        } catch (\Throwable $th) {
+            DB::rollback();
+            $response = [
+                'status' => 'error',
+                'message' => 'Invoice gagal dibuat',
+                'error' => $th->getMessage()
+            ];
+        }
+        return \response()->json($response);
+    }
+
+    public function deleteInvoice($id)
+    {
+        try {
+            DB::beginTransaction();
+            Invoice::findOrFail($id)->delete();
+            DB::commit();
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Invoice berhasil dihapus',
+            ]);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Invoice gagal dihapus',
+                'error' => $th->getMessage(),
+            ]);
+        }
+        return response()->json($response);
     }
 }

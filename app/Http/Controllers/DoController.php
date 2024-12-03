@@ -264,11 +264,14 @@ class DoController extends Controller
         $data = OrderItems::select(
             'surat_jalan.id as surat_jalan_id',
             'surat_jalan.nomor_surat_jalan as nomor_surat_jalan',
+            'surat_jalan.nomor_invoice as nomor_invoice',
             'perusahaan.nama_perusahaan as nama_perusahaan',
+            'order_items.perusahaan_id as perusahaan_id'
         )
             ->join('surat_jalan', 'order_items.surat_jalan_id', '=', 'surat_jalan.id')
             ->join('perusahaan', 'order_items.perusahaan_id', '=', 'perusahaan.id')
-            ->groupBy('surat_jalan_id', 'surat_jalan.nomor_surat_jalan', 'perusahaan.nama_perusahaan');
+        ->groupBy('surat_jalan_id', 'surat_jalan.nomor_surat_jalan', 'perusahaan.nama_perusahaan', 'surat_jalan.nomor_invoice', 'order_items.perusahaan_id')
+        ->orderBy('surat_jalan_id', 'asc');
         if ($request->filled('do_filter')) {
             $data->whereDate('surat_jalan.tanggal', $request->do_filter);
         }

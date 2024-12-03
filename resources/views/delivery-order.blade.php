@@ -104,7 +104,7 @@
 				</table>
 			</div>
 			<h4 class="mb-3">Daftar Do</h4>
-			<div class="d-flex justify-content-between mb-3 align-items-center flex-wrap gap-2">
+			<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
 				<button class="btn btn-primary d-flex align-items-start mb-4 gap-2" id="button-modal-tmbh-do" type="button">
 					<span>Tambah Data</span>
 				</button>
@@ -119,6 +119,7 @@
 						<tr>
 							<th>no</th>
 							<th>nomor surat jalan</th>
+							<th>nomor invoice</th>
 							<th>pt tujuan</th>
 							<th>cetak do</th>
 							<th>aksi</th>
@@ -133,7 +134,7 @@
 				<div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-xl">
 					<div class="modal-content px-2">
 						<div class="modal-header">
-							<h1 class="modal-title fs-5" id="staticBackdropLabel">Tambah Invoice</h1>
+							<h1 class="modal-title fs-5" id="staticBackdropLabel">Tambah DO</h1>
 							<button class="btn-close" data-bs-dismiss="modal" type="button" aria-label="Close"></button>
 						</div>
 						<div class="modal-body">
@@ -176,8 +177,7 @@
 								</div>
 								<div class="col-12 d-flex justify-content-end my-2 gap-3">
 									<a class="text-primary text-decoration-none" id="add-row" href="javascript:void(0)">+
-										Tambah
-										baris</a>
+										Tambah baris</a>
 								</div>
 								<hr>
 								<div class="row mb-3">
@@ -383,6 +383,11 @@
 						className: 'text-start',
 					},
 					{
+						data: 'nomor_invoice',
+						name: 'surat_jalan.nomor_invoice',
+						className: 'text-start',
+					},
+					{
 						data: 'nama_perusahaan',
 						name: 'perusahaan.nama_perusahaan',
 						className: 'text-start',
@@ -461,7 +466,8 @@
 			var currentRoute = window.location.pathname;
 			if (currentRoute == '/delivery-order') {
 				$('#menu-do').addClass('active');
-				$('#menu-penawaran', '#menu-dashboard', '#menu-invoice','#menu-exportsql','#menu-pembelian-barang').removeClass('active');
+				$('#menu-penawaran', '#menu-dashboard', '#menu-invoice', '#menu-exportsql', '#menu-pembelian-barang')
+					.removeClass('active');
 			}
 		});
 
@@ -490,12 +496,6 @@
 			$('#button-tambah-perusahaan').attr('disabled', true);
 			let formData = new FormData(this);
 			$.ajax({
-				headers: {
-					"X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
-				},
-				cache: false,
-				contentType: false,
-				processData: false,
 				headers: {
 					"X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
 				},
@@ -558,7 +558,6 @@
 			$('#modalAddDo').modal('show');
 		});
 
-		// Konfigurasi untuk modal Add
 		$('#nama-perusahaan').select2({
 			dropdownParent: $('#modalAddDo'),
 			theme: 'bootstrap4',
@@ -1019,6 +1018,10 @@
                                  <label class="form-label">Keterangan</label>
                                  <input class="form-control" name="keterangan[]" type="text" value="${itemData.keterangan ?? ''}">
                               </div>
+										${$('#input-container-edit .row').length > 0 ? `
+											<div class="col-12 mt-2 text-start">
+												<a class="text-danger text-decoration-none remove-row" href="javascript:void(0)">- Hapus Baris</a>
+											</div>` : ''}
                            </div>
                         `);
 							});

@@ -56,6 +56,10 @@ Route::group(['prefix' => 'invoice'], function () {
     Route::get('/', [InvoiceController::class, 'index']);
     Route::get('cetak-invoice/{id}', [InvoiceController::class, 'cetakInvoice']);
     Route::get('/get-invoice', [InvoiceController::class, 'getInvoice']);
+    Route::get('/list-invoice', [InvoiceController::class, 'listInvoice']);
+    Route::get('/list-do', [InvoiceController::class, 'listDo']);
+    Route::post('/create-invoice', [InvoiceController::class, 'createInvoice']);
+    Route::delete('/delete-invoice/{id}', [InvoiceController::class, 'deleteInvoice']);
 });
 
 Route::group(['prefix' => 'pembelian-barang'], function () {
