@@ -45,6 +45,11 @@ return [
 
         'mysql' => [
             'driver' => 'mysql',
+            'dump' => [
+                'dump_binary_path' => 'C:\laragon\bin\mysql\mysql-8.0.30-winx64\bin',
+                'use_single_transaction',
+                'timeout' => 60 * 5,
+            ],
             'url' => env('DATABASE_URL'),
             'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', '3306'),

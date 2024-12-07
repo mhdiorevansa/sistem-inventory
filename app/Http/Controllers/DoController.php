@@ -177,7 +177,7 @@ class DoController extends Controller
             $romanNumerals = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
             $month = $romanNumerals[Carbon::now()->month - 1];
             $year = Carbon::now()->year;
-            $noInvoice = \sprintf(".../INV/PT.KSS/%s/%s", $month, $year);
+            $noInvoice = \sprintf("/INV/PT.KSS/%s/%s", $month, $year);
             DB::commit();
             $response = [
                 'status' => 'success',
@@ -209,8 +209,8 @@ class DoController extends Controller
             'nomor_polisi' => 'required',
             'kode_barang' => 'required',
             'kode_barang.*' => 'required',
-            'nama_barang' => 'required',
-            'nama_barang.*' => 'required',
+            'nama_barang' => 'required|max:70',
+            'nama_barang.*' => 'required|max:70',
             'harga_barang' => 'required',
             'harga_barang.*' => 'required',
             'satuan' => 'required',

@@ -7,6 +7,10 @@
 		<meta http-equiv="X-UA-Compatible" content="ie=edge">
 		<title>Cetak Invoice</title>
 		<style type="text/css">
+			body {
+				margin: 1cm;
+			}
+
 			h1 {
 				color: black;
 				font-family: "Times New Roman", serif;
@@ -106,16 +110,26 @@
 				word-wrap: break-word;
 				word-break: break-word;
 				white-space: normal;
-				page-break-inside: avoid;
 			}
 
-			th {
-				page-break-inside: avoid;
+			table tbody tr:nth-child(9),
+			table tbody tr:nth-child(24),
+			table tbody tr:nth-child(39),
+			table tbody tr:nth-child(55)
+			{
+			border-bottom: 1px solid black;
+			}
+			table tbody tr:nth-child(10),
+			table tbody tr:nth-child(25),
+			table tbody tr:nth-child(40),
+			table tbody tr:nth-child(56)
+			{
+				border-top: 1px solid black;
 			}
 		</style>
 	</head>
 
-	<body style="margin: 1cm;">
+	<body style="position: relative;">
 		<h1 style="text-align: center;">PT. KAISAR SINAR SAMUDERA</h1>
 		<div style="line-height: 160%;text-align: center;margin-top: -18pt;">
 			<h4>KO. PERMATA
@@ -137,45 +151,63 @@
 		<p style="padding-top: 8pt;padding-left: 5pt;text-indent: 0pt;text-align: left;">Kepada Yth.</p>
 		<p style="padding-top: 8pt;padding-left: 5pt;text-indent: 0pt;text-align: left; ">
 			{{ strtoupper($data->nama_perusahaan) }}</p>
-		<p style="padding-top: 8pt;padding-left: 5pt;text-indent: 0pt;line-height: 107%;text-align: left;">Alamat :
+		<p style="padding-top: 8pt;padding-left: 5pt;text-indent: 0pt;line-height: 107%;text-align: left; margin-bottom: ">
+			Alamat :
 			{{ ucwords(strtolower($data->alamat)) }}
 		</p>
 		<h2 style="padding-top: 8pt;text-align: center;"> INVOICE</h2>
 		<p style="text-align: center;">{{ $data->nomor_invoice }}</p>
 		<p style="text-indent: 0pt;text-align: left;"><br /></p>
-		<table style="border-collapse: collapse;" cellspacing="0">
-			<thead>
-				<tr>
-					<td
-						style="width:60pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-						<p class="s2" style="padding-left: 5pt;text-indent: 0pt;text-align: left;">Po Number</p>
-					</td>
-					<td
-						style="width:145pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-						<p class="s2" style="padding-left: 5pt;text-indent: 0pt;text-align: left;">Description</p>
-					</td>
-					<td
-						style="width:62pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-						<p class="s2" style="padding-left: 5pt;text-indent: 0pt;text-align: left;">Quantity</p>
-					</td>
-					<td
-						style="width:91pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-						<p class="s2" style="padding-left: 5pt;text-indent: 0pt;text-align: left;">Harga</p>
-					</td>
-					<td
-						style="width:81pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-						<p class="s2" style="padding-left: 5pt;text-indent: 0pt;text-align: left;">Grand Total</p>
-					</td>
-				</tr>
-			</thead>
+		@php
+			$poCounts = [];
+			foreach ($manyData as $item) {
+			    $poCounts[$item->nomor_po] = isset($poCounts[$item->nomor_po]) ? $poCounts[$item->nomor_po] + 1 : 1;
+			}
+		@endphp
+		<table style="border-collapse: collapse;border-spacing: 0;width: 100%;" cellspacing="0">
+			<tr>
+				<td
+					style="width:60pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+					<p class="s2" style="padding-left: 5pt;text-indent: 0pt;text-align: left;">Po Number</p>
+				</td>
+				<td
+					style="width:145pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+					<p class="s2" style="padding-left: 5pt;text-indent: 0pt;text-align: left;">Description</p>
+				</td>
+				<td
+					style="width:62pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+					<p class="s2" style="padding-left: 5pt;text-indent: 0pt;text-align: left;">Quantity</p>
+				</td>
+				<td
+					style="width:91pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+					<p class="s2" style="padding-left: 5pt;text-indent: 0pt;text-align: left;">Harga</p>
+				</td>
+				<td
+					style="width:81pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+					<p class="s2" style="padding-left: 5pt;text-indent: 0pt;text-align: left;">Grand Total</p>
+				</td>
+			</tr>
 			<tbody>
-				@foreach ($manyData as $item)
+				@foreach ($manyData as $index => $item)
 					<tr>
-						<td style="width:60pt; border-left:solid 1pt; border-right:solid 1pt; border-bottom:solid 1pt;">
-							<p class="s3" style="padding-left: 5pt; text-indent: 0pt; text-align: left; ">
-								{{ $item->nomor_po }}
-							</p>
-						</td>
+						@if ($loop->index == 0 || $item->nomor_po != $manyData[$loop->index - 1]->nomor_po)
+							<td
+								style="height: 60px; width:60pt; border-left:solid 1pt; border-right:solid 1pt; border-top:solid 1pt; border-bottom:none;">
+								<p class="s3" style="padding-left: 5pt; text-indent: 0pt; text-align: left;">
+									{{ $item->nomor_po }}
+								</p>
+							</td>
+						@elseif ($loop->last || $item->nomor_po != $manyData[$loop->index + 1]->nomor_po)
+							<td
+								style="height: 60px; width:60pt; border-left:solid 1pt; border-right:solid 1pt; border-top:none; border-bottom:solid 1pt;">
+								<p class="s3" style="padding-left: 5pt; text-indent: 0pt; text-align: left;"></p>
+							</td>
+						@else
+							<td
+								style="height: 60px; width:60pt; border-left:solid 1pt; border-right:solid 1pt; border-top:none; border-bottom:none;">
+								<p class="s3" style="padding-left: 5pt; text-indent: 0pt; text-align: left;"></p>
+							</td>
+						@endif
 						<td style="width:145pt; border:solid 1pt;">
 							<p class="s3" style="padding-left: 5pt; text-indent: 0pt; text-align: left;">
 								{{ $item->nama_barang }}
@@ -194,10 +226,11 @@
 						@if ($loop->first)
 							<td style="width:91pt;border-right:solid 1pt;">
 								<p class="s3" style="padding-left: 5pt; text-indent: 0pt; text-align: left;">
-									{{ 'Rp. ' . number_format($totalHargaBarang, 0, ',', '.') }}</p>
+									{{ 'Rp. ' . number_format($totalHargaBarang, 0, ',', '.') }}
+								</p>
 							</td>
 						@else
-							<td style="width:91pt;border-bottom:solid 0pt; border-right: solid 1pt"></td>
+							<td style="width:91pt;border-right:solid 1pt;"></td>
 						@endif
 					</tr>
 				@endforeach
@@ -231,23 +264,27 @@
 			</tfoot>
 		</table>
 		<p style="padding-top: 9pt;"><br /></p>
-		<div style="border:2.5pt solid #000000;min-height:74.2pt;width:216.0pt;display: inline-block">
-			<p class="s5" style="padding-top: 3pt;padding-left: 7pt;text-indent: 0pt;line-height: 106%;text-align: left;">
-				Mohon untuk mengirimkan pembayaran melalui Bank :</p>
-			<p class="s5" style="padding-top: 8pt;padding-left: 7pt;text-indent: 0pt;line-height: 106%;text-align: left;">
-				BANK
-				MANDIRI : 108-001704835-7 A/N : PT.KAISAR SINAR SAMUDERA</p>
+		<div style="page-break-inside: avoid;">
+			<div style="min-height: 74.2pt; width: 216.0pt; display: inline-block; border: 2.5pt solid #000000; padding: 10px;">
+				<p class="s5"
+					style="padding-top: 3pt; padding-left: 7pt; text-indent: 0pt; line-height: 106%; text-align: left;">
+					Mohon untuk mengirimkan pembayaran melalui Bank :
+				</p>
+				<p class="s5"
+					style="padding-top: 8pt; padding-left: 7pt; text-indent: 0pt; line-height: 106%; text-align: left;">
+					BANK MANDIRI : 108-001704835-7 A/N : PT.KAISAR SINAR SAMUDERA
+				</p>
+			</div>
+			<div style="margin-top: -100pt;">
+				<p style="padding-left: 258pt; line-height: 170%; text-align: left;">
+					Pangkalan Kerinci, {{ $currentDate }} <br> PT. KAISAR SINAR SAMUDERA
+				</p>
+				<p style="text-indent: 0pt; text-align: left; margin-top: 40pt"><br /></p>
+				<p style="padding-left: 320pt; text-indent: -29pt; line-height: 170%; text-align: left;">
+					<u>Raiza elena oktaviana</u> <br> Direktur
+				</p>
+			</div>
 		</div>
-		<div style="margin-top: -85pt;">
-			<p style="padding-left: 258pt;line-height: 170%;text-align: left;">Pangkalan Kerinci, {{ $currentDate }} <br> PT.
-				KAISAR SINAR SAMUDERA</p>
-		</div>
-		<p style="text-indent: 0pt;text-align: left; margin-top: 0pt"><br /></p>
-		<p style="padding-left: 320pt;text-indent: -29pt;line-height: 170%;text-align: left;"><u>Raiza elena
-				oktaviana</u>
-			<br>
-			Direktur
-		</p>
 	</body>
 
 </html>

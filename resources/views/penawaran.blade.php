@@ -105,18 +105,18 @@
 				<table class="table-striped table" id="penawaran-table">
 					<thead>
 						<tr>
-							<th>no</th>
-							<th>item</th>
-							<th>qty</th>
-							<th>belanja</th>
-							<th>ongkir</th>
-							<th>total</th>
-							<th>net</th>
+							<th>No</th>
+							<th>Item</th>
+							<th>Qty</th>
+							<th>Belanja</th>
+							<th>Ongkir</th>
+							<th>Total</th>
+							<th>Net</th>
 							<th>10%</th>
-							<th>penawaran</th>
-							<th>untung</th>
-							<th>untung belanja</th>
-							<th>ariba</th>
+							<th>Penawaran</th>
+							<th>Untung</th>
+							<th>Untung Belanja</th>
+							<th>Ariba</th>
 							<th>Aksi</th>
 						</tr>
 					</thead>

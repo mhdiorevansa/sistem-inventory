@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BackupDbController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DoController;
 use App\Http\Controllers\InvoiceController;
@@ -17,6 +18,7 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
 route::redirect('/', '/dashboard');
 Route::group(['prefix' => 'dashboard'], function () {
     Route::get('/', [DashboardController::class, 'index']);
@@ -59,6 +61,8 @@ Route::group(['prefix' => 'invoice'], function () {
     Route::get('/list-invoice', [InvoiceController::class, 'listInvoice']);
     Route::get('/list-do', [InvoiceController::class, 'listDo']);
     Route::post('/create-invoice', [InvoiceController::class, 'createInvoice']);
+    Route::get('/edit-invoice/{id}', [InvoiceController::class, 'editInv']);
+    Route::put('/update-invoice/{id}', [InvoiceController::class, 'updateInv']);
     Route::delete('/delete-invoice/{id}', [InvoiceController::class, 'deleteInvoice']);
 });
 
@@ -70,4 +74,9 @@ Route::group(['prefix' => 'pembelian-barang'], function () {
     Route::put('/update-data-pembelian/{id}', [PembelianBarangController::class, 'updatePembelian']);
     Route::delete('/delete-data-pembelian/{id}', [PembelianBarangController::class, 'deletePembelian']);
     Route::get('export-pdf', [PembelianBarangController::class, 'exportPDF']);
+});
+
+Route::group(['prefix' => 'backup-db'], function () {
+    Route::get('/', [BackupDbController::class, 'index']);
+    Route::get('/backup', [BackupDbController::class, 'backup']);
 });

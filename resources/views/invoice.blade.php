@@ -60,13 +60,53 @@
 							</div>
 							<div class="mb-3">
 								<label class="mb-1" for="">Pilih DO</label>
-								<div class="bg-warning-subtle rounded p-3" id="warning-pilih-inv">Pilih Nomor Invoice Terlebih Dahulu</div>
+								<div class="bg-warning-subtle rounded p-3" id="warning-pilih-inv">Pilih Nomor Invoice, dan Perusahaan Terlebih
+									Dahulu</div>
 								<div class="accordion" id="accordionDO">
 									<!-- Accordion items akan ditambahkan di sini melalui JavaScript -->
 								</div>
 							</div>
 							<button class="btn btn-primary align-items-center d-flex mt-3 gap-2" id="button-add-inv" type="submit">
 								<span>Tambah Data</span>
+							</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		{{-- modal edit --}}
+		<div class="modal fade" id="modalEditInv" data-bs-backdrop="static" data-bs-keyboard="false" role="dialog"
+			aria-labelledby="modal_addLabel" aria-hidden="true" tabindex="-1">
+			<div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg">
+				<div class="modal-content px-2">
+					<div class="modal-header">
+						<h1 class="modal-title fs-5" id="staticBackdropLabel">Edit Invoice</h1>
+						<button class="btn-close" data-bs-dismiss="modal" type="button" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<form id="edit-inv">
+							@csrf
+							<input id="invoice-id-edit" name="id" type="hidden">
+							<div class="mb-3">
+								<label class="mb-1" for="">Ambil Nomor Invoice</label>
+								<select id="nomor-invoice-edit" name="nomor_invoice">
+									<option value="">Pilih Nomor Invoice</option>
+								</select>
+							</div>
+							<div class="mb-3">
+								<label class="mb-1" for="">Tujuan Perusahaan</label>
+								<select id="tujuan-perusahaan-edit" name="perusahaan_id">
+									<option value="">Pilih Nomor Invoice</option>
+								</select>
+							</div>
+							<div class="mb-3">
+								<label class="mb-1" for="">Pilih DO</label>
+								<div class="accordion" id="accordionDOEdit">
+									<!-- Accordion items akan ditambahkan di sini melalui JavaScript -->
+								</div>
+							</div>
+							<button class="btn btn-primary align-items-center d-flex mt-3 gap-2" id="button-edit-inv" type="submit">
+								<span>Edit Data</span>
 							</button>
 						</form>
 					</div>
@@ -179,6 +219,32 @@
 			minimumInputLength: 0
 		});
 
+		$('#nomor-invoice-edit').select2({
+			dropdownParent: $('#modalEditInv'),
+			theme: 'bootstrap4',
+			ajax: {
+				url: "invoice/list-invoice",
+				dataType: 'json',
+				delay: 250,
+				data: function(params) {
+					return {
+						search: params.term || ''
+					};
+				},
+				processResults: function(data) {
+					return {
+						results: data.data.map((noInv) => ({
+							id: noInv.id,
+							text: noInv.nomor_invoice
+						}))
+					};
+				},
+				cache: true
+			},
+			placeholder: 'Pilih Nomor Invoice',
+			minimumInputLength: 0
+		});
+
 		$('#tujuan-perusahaan').select2({
 			dropdownParent: $('#modalAddInv'),
 			theme: 'bootstrap4',
@@ -205,49 +271,79 @@
 			minimumInputLength: 0
 		});
 
-		$('#nomor-invoice').on('change', function() {
-			$('#warning-pilih-inv').addClass('d-none');
-			$.ajax({
-				url: `/invoice/list-do/`,
-				method: 'GET',
-				success: function(data) {
-					renderAccordion(data);
+		$('#tujuan-perusahaan-edit').select2({
+			dropdownParent: $('#modalEditInv'),
+			theme: 'bootstrap4',
+			ajax: {
+				url: "delivery-order/list-perusahaan",
+				dataType: 'json',
+				delay: 250,
+				data: function(params) {
+					return {
+						search: params.term || ''
+					};
 				},
-				error: function(err) {
-					console.error(err);
-					alert('Gagal memuat data delivery order!');
-				}
-			});
+				processResults: function(data) {
+					return {
+						results: data.data.map((company) => ({
+							id: company.id,
+							text: company.nama_perusahaan
+						}))
+					};
+				},
+				cache: true
+			},
+			placeholder: 'Pilih Perusahaan',
+			minimumInputLength: 0
+		});
+
+		$('#nomor-invoice, #tujuan-perusahaan').on('change', function() {
+			const nomorInvoice = $('#nomor-invoice').val();
+			const tujuanPerusahaan = $('#tujuan-perusahaan').val();
+			if (nomorInvoice && tujuanPerusahaan) {
+				$('#warning-pilih-inv').addClass('d-none');
+				$.ajax({
+					url: `/invoice/list-do/`,
+					method: 'GET',
+					success: function(data) {
+						renderAccordion(data);
+					},
+					error: function(err) {
+						console.error(err);
+						alert('Gagal memuat data delivery order!');
+					}
+				});
+			}
 		});
 
 		function renderAccordion(data) {
-			const accordionContainer = document.getElementById('accordionDO');
-			accordionContainer.innerHTML = '';
-
+			const $accordionContainer = $('#accordionDO');
+			$accordionContainer.empty();
 			data.forEach((doItem, index) => {
 				const accordionId = `collapse-${index}`;
-				const accordionHTML = `
-					<div class="accordion-item">
-						<h2 class="accordion-header">
-							<button class="accordion-button flex ${index === 0 ? '' : 'collapsed'}" 
-								type="button" 
-								data-bs-toggle="collapse" 
-								data-bs-target="#${accordionId}" 
-								aria-expanded="${index === 0}" 
-								aria-controls="${accordionId}" 
-								data-id="${doItem.id}">
-								<input type="checkbox" class="form-check-input me-2" data-id="${doItem.id}"><span>${doItem.nomor_surat_jalan} (Nomor PO : ${doItem.nomor_po})</span>
-							</button>
-						</h2>
-						<div id="${accordionId}" 
-								class="accordion-collapse collapse ${index === 0 ? 'show' : ''}" 
-								data-bs-parent="#accordionDO">
-							<div class="accordion-body">
-								${renderItems(doItem.items)}
-							</div>
+				const $accordionItem = $(`
+            <div class="accordion-item">
+               <h2 class="accordion-header">
+                  <button class="accordion-button flex ${index === 0 ? '' : 'collapsed'}" 
+                        type="button" 
+                        data-bs-toggle="collapse" 
+                        data-bs-target="#${accordionId}" 
+                        aria-expanded="${index === 0}" 
+                        aria-controls="${accordionId}" 
+                        data-id="${doItem.id}">
+                        <input type="checkbox" class="form-check-input me-2" data-id="${doItem.id}">
+                        <span>${doItem.nomor_surat_jalan} | Nomor PO : ${doItem.id}</span>
+                  </button>
+               </h2>
+               <div id="${accordionId}" 
+                  class="accordion-collapse collapse ${index === 0 ? 'show' : ''}" 
+                  data-bs-parent="#accordionDO">
+						<div class="accordion-body">
+							${renderItems(doItem.items)}
 						</div>
-					</div>`;
-				accordionContainer.innerHTML += accordionHTML;
+               </div>
+            </div>`);
+				$accordionContainer.append($accordionItem);
 			});
 		}
 
@@ -255,30 +351,33 @@
 			if (!items || items.length === 0) {
 				return '<p>Tidak ada item untuk nomor DO ini.</p>';
 			}
-			return `
-			<table class="table table-bordered">
-					<thead>
-						<tr>
-							<th>Kode Barang</th>
-							<th>Nama Barang</th>
-							<th>Harga</th>
-							<th>Satuan</th>
-							<th>Jumlah</th>
-							<th>Keterangan</th>
-						</tr>
-					</thead>
-					<tbody>
-						${items.map(item => `
-										<tr>
-											<td>${item.kode_barang}</td>
-											<td>${item.nama_barang}</td>
-											<td>${item.harga_barang}</td>
-											<td>${item.satuan}</td>
-											<td>${item.jumlah_barang}</td>
-											<td>${item.keterangan || '-'}</td>
-										</tr>`).join('')}
-					</tbody>
-			</table>`;
+			const $table = $('<table class="table table-bordered"></table>');
+			const $thead = $(`
+			<thead>
+					<tr>
+						<th>Kode Barang</th>
+						<th>Nama Barang</th>
+						<th>Harga Barang</th>
+						<th>Satuan</th>
+						<th>Jumlah</th>
+						<th>Keterangan</th>
+					</tr>
+			</thead>`);
+			const $tbody = $('<tbody></tbody>');
+			items.forEach(item => {
+				const $row = $(`
+            <tr>
+               <td>${item.kode_barang}</td>
+               <td>${item.nama_barang}</td>
+					<td>${"Rp. " + item.harga_barang.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}</td>
+               <td>${item.satuan}</td>
+               <td>${item.jumlah_barang}</td>
+               <td>${item.keterangan || '-'}</td>
+            </tr>`);
+				$tbody.append($row);
+			});
+			$table.append($thead).append($tbody);
+			return $('<div class="table-responsive"></div>').append($table).prop('outerHTML');
 		}
 
 		$('#add-inv').on('submit', function(e) {
@@ -406,6 +505,211 @@
 			});
 		});
 
+		function editDataInv(invoiceId) {
+			$.ajax({
+				headers: {
+					'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+				},
+				url: `/invoice/edit-invoice/${invoiceId}`,
+				method: 'GET',
+				dataType: 'json',
+				success: function(response) {
+					let data = response.data;
+					let inv = data[0];
+					let newOptionPerusahaan = new Option(inv.nama_perusahaan, inv.id_perusahaan, true, true);
+					let newOptionNomorInvoice = new Option(inv.nomor_invoice, inv.nomor_invoice, true, true);
+					$('#invoice-id-edit').val(inv.id_invoice);
+					$('#tujuan-perusahaan-edit').append(newOptionPerusahaan).trigger('change');
+					$('#nomor-invoice-edit').append(newOptionNomorInvoice).trigger('change');
+					renderAccordionEdit(data);
+					$('#modalEditInv').modal('show');
+				},
+				error: function(err) {
+					console.error(err);
+					alert('Gagal memuat data invoice!');
+				}
+			});
+		}
+
+		function renderAccordionEdit(data) {
+			const $accordionContainer = $('#accordionDOEdit');
+			$accordionContainer.empty();
+			data.forEach((doItem, index) => {
+				const accordionId = `collapse-${index}`;
+				const $accordionItem = $(`
+            <div class="accordion-item">
+               <h2 class="accordion-header">
+                  <button class="accordion-button flex ${index === 0 ? '' : 'collapsed'}" 
+                        type="button" 
+                        data-bs-toggle="collapse" 
+                        data-bs-target="#${accordionId}" 
+                        aria-expanded="${index === 0}" 
+                        aria-controls="${accordionId}" 
+                        data-id="${doItem.id_surat_jalan}">
+                        <input type="checkbox" class="form-check-input me-2" data-id="${doItem.id_surat_jalan}" ${doItem.do_id ? 'checked' : ''}>
+                        <span>${doItem.nomor_surat_jalan} | Nomor PO : ${doItem.nomor_po}</span>
+                  </button>
+               </h2>
+               <div id="${accordionId}" 
+                  class="accordion-collapse collapse ${index === 0 ? 'show' : ''}" 
+                  data-bs-parent="#accordionDOEdit">
+						<div class="accordion-body">
+							${renderItemsEdit(doItem.items)}
+						</div>
+               </div>
+            </div>`);
+				$accordionContainer.append($accordionItem);
+			});
+		}
+
+		function renderItemsEdit(items) {
+			if (!items || items.length === 0) {
+				return '<p>Tidak ada item untuk nomor DO ini.</p>';
+			}
+			const $table = $('<table class="table table-bordered"></table>');
+			const $thead = $(`
+			<thead>
+					<tr>
+						<th>Kode Barang</th>
+						<th>Nama Barang</th>
+						<th>Harga Barang</th>
+						<th>Satuan</th>
+						<th>Jumlah</th>
+						<th>Keterangan</th>
+					</tr>
+			</thead>`);
+			const $tbody = $('<tbody></tbody>');
+			items.forEach(item => {
+				const $row = $(`
+            <tr>
+               <td>${item.kode_barang}</td>
+               <td>${item.nama_barang}</td>
+               <td>${"Rp. " + item.harga_barang.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}</td>
+               <td>${item.satuan}</td>
+               <td>${item.jumlah_barang}</td>
+               <td>${item.keterangan || '-'}</td>
+            </tr>`);
+				$tbody.append($row);
+			});
+			$table.append($thead).append($tbody);
+			return $('<div class="table-responsive"></div>').append($table).prop('outerHTML');
+		}
+
+		$('#edit-inv').on('submit', function(e) {
+			e.preventDefault();
+			var id = $('#invoice-id-edit').val();
+			$('#button-edit-inv').attr('disabled', true);
+			let nomorInvoice = $('#nomor-invoice-edit option:selected').text();
+			let tujuanPerusahaan = $('#tujuan-perusahaan-edit option:selected').val();
+			let doIdList = [];
+			$('#accordionDOEdit .form-check-input:checked').each(function() {
+				let doId = $(this).data('id');
+				if (doId) {
+					doIdList.push(doId);
+				}
+			});
+			if (doIdList.length === 0) {
+				const Toast = Swal.mixin({
+					toast: true,
+					position: "top-end",
+					showConfirmButton: false,
+					timer: 2000,
+					timerProgressBar: true,
+					didOpen: (toast) => {
+						toast.onmouseenter = Swal.stopTimer;
+						toast.onmouseleave = Swal.resumeTimer;
+					},
+				});
+				Toast.fire({
+					icon: "warning",
+					title: "Pilih minimal satu DO untuk membuat invoice.",
+				});
+				$('#button-edit-inv').attr('disabled', false);
+				return;
+			}
+			var formdata = new FormData();
+			formdata.append('_method', 'PUT');
+			formdata.append('nomor_invoice', nomorInvoice);
+			formdata.append('perusahaan_id', tujuanPerusahaan);
+			doIdList.forEach(doId => formdata.append('do_id[]', doId));
+			console.log(doIdList);
+			$.ajax({
+				headers: {
+					'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+				},
+				cache: false,
+				contentType: false,
+				processData: false,
+				method: 'POST',
+				url: "invoice/update-invoice/" + id,
+				data: formdata,
+				dataType: 'json',
+				success: function(response) {
+					if (response.status === 'success') {
+						const Toast = Swal.mixin({
+							toast: true,
+							position: "top-end",
+							showConfirmButton: false,
+							timer: 2000,
+							timerProgressBar: true,
+							didOpen: (toast) => {
+								toast.onmouseenter = Swal.stopTimer;
+								toast.onmouseleave = Swal.resumeTimer;
+							},
+						});
+						Toast.fire({
+							icon: "success",
+							title: response.message,
+						});
+						$('#nomor-invoice-edit').val('').trigger('change');
+						$('#accordionDOEdit').find('.form-check-input:checked').prop('checked', false);
+						$('#accordionDOEdit').find('.collapse').removeClass('show');
+						$('#accordionDOEdit .accordion-button').addClass('collapsed');
+						$('#modalEditInv').modal('hide');
+						$('.modal-backdrop.fade.show').remove();
+						$('#edit-inv')[0].reset();
+						tableInvoice.ajax.reload(null, false);
+					} else {
+						const Toast = Swal.mixin({
+							toast: true,
+							position: "top-end",
+							showConfirmButton: false,
+							timer: 2000,
+							timerProgressBar: true,
+							didOpen: (toast) => {
+								toast.onmouseenter = Swal.stopTimer;
+								toast.onmouseleave = Swal.resumeTimer;
+							},
+						});
+						Toast.fire({
+							icon: "error",
+							title: response.message,
+						});
+					}
+				},
+				error: function(response) {
+					const Toast = Swal.mixin({
+						toast: true,
+						position: "top-end",
+						showConfirmButton: false,
+						timer: 2000,
+						timerProgressBar: true,
+						didOpen: (toast) => {
+							toast.onmouseenter = Swal.stopTimer;
+							toast.onmouseleave = Swal.resumeTimer;
+						},
+					});
+					Toast.fire({
+						icon: "error",
+						text: "Ada kesalahan",
+					});
+				},
+				complete: function() {
+					$('#button-edit-inv').attr('disabled', false);
+				}
+			});
+		});
+
 		function deleteDataInv(id) {
 			swal.fire({
 				title: 'Apakah anda yakin??',
@@ -485,10 +789,10 @@
 			input.value = numberString;
 		}
 
-		$('#modalAddInv').on('hidden.bs.modal', function() {
+		$('#modalAddInv, #modalEditInv').on('hidden.bs.modal', function() {
 			$('body').css('overflow', 'auto');
 		});
-		$('#modalAddInv').on('shown.bs.modal', function() {
+		$('#modalAddInv, #modalEditInv').on('shown.bs.modal', function() {
 			$('body').css('overflow', 'hidden');
 		});
 	</script>

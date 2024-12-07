@@ -92,20 +92,20 @@
 				<table class="table-striped table" id="perusahaan-table">
 					<thead>
 						<tr>
-							<th>no</th>
-							<th>nama pt</th>
-							<th>alamat</th>
-							<th>no hp</th>
-							<th>npwp</th>
-							<th>aksi</th>
+							<th>No</th>
+							<th>Nama PT</th>
+							<th>Alamat</th>
+							<th>No HP</th>
+							<th>NPWP</th>
+							<th>Aksi</th>
 						</tr>
 					</thead>
 					<tbody></tbody>
 				</table>
 			</div>
-			<h4 class="mb-3">Daftar Do</h4>
+			<h4 class="mb-3 mt-4 md:mt-0">Daftar Do</h4>
 			<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-				<button class="btn btn-primary d-flex align-items-start mb-4 gap-2" id="button-modal-tmbh-do" type="button">
+				<button class="btn btn-primary d-flex align-items-start md:mb-4 gap-2" id="button-modal-tmbh-do" type="button">
 					<span>Tambah Data</span>
 				</button>
 				<div class="d-flex align-items-center mt-3 gap-2">
@@ -117,12 +117,12 @@
 				<table class="table-striped table" id="do-table">
 					<thead>
 						<tr>
-							<th>no</th>
-							<th>nomor surat jalan</th>
-							<th>nomor invoice</th>
-							<th>pt tujuan</th>
-							<th>cetak do</th>
-							<th>aksi</th>
+							<th>No</th>
+							<th>Nomor Surat Jalan</th>
+							<th>Nomor Invoice</th>
+							<th>PT Tujuan</th>
+							<th>Cetak DO</th>
+							<th>Aksi</th>
 						</tr>
 					</thead>
 					<tbody></tbody>
@@ -169,7 +169,7 @@
 											<label class="form-label" for="jumlah_barang">Qty</label>
 											<input class="form-control" name="jumlah_barang[]" type="number">
 										</div>
-										<div class="col-md-2 col-12 mb-md-0 mb-2">
+										<div class="col-md-2 col-6 mb-md-0 mb-2">
 											<label class="form-label" for="keterangan">Keterangan</label>
 											<input class="form-control" name="keterangan[]" type="text">
 										</div>
@@ -181,27 +181,27 @@
 								</div>
 								<hr>
 								<div class="row mb-3">
-									<div class="col-4 mb-2">
+									<div class="col-md-4 col-6 mb-2">
 										<label class="form-label" for="nomor_surat_jalan">No Surat Jalan</label>
 										<input class="form-control" id="nomor-surat-jalan" name="nomor_surat_jalan" type="text">
 									</div>
-									<div class="col-4 mb-2">
+									<div class="col-md-4 col-6 mb-2">
 										<label class="form-label" for="nomor_invoice">Nomor Invoice</label>
 										<input class="form-control" id="nomor-surat-invoice" name="nomor_invoice" type="text">
 									</div>
-									<div class="col-4 mb-2">
+									<div class="col-md-4 col-6 mb-2">
 										<label class="form-label" for="tanggal">Tanggal</label>
 										<input class="form-control" name="tanggal" type="date">
 									</div>
-									<div class="col-4 mb-2">
+									<div class="col-md-4 col-6 mb-2">
 										<label class="form-label" for="nomor_po">No PO</label>
 										<input class="form-control" name="nomor_po" type="number">
 									</div>
-									<div class="col-4 mb-2">
+									<div class="col-md-4 col-6 mb-2">
 										<label class="form-label" for="transportasi_kirim">Dikirim Dengan</label>
 										<input class="form-control" name="transportasi_kirim" type="text">
 									</div>
-									<div class="col-4 mb-2">
+									<div class="col-md-4 col-6 mb-2">
 										<label class="form-label" for="nomor_polisi">Nomor Polisi</label>
 										<input class="form-control" name="nomor_polisi" type="text">
 									</div>

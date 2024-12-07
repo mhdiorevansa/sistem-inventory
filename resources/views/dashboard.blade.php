@@ -13,7 +13,7 @@
 			<section class="row">
 				<div class="col-12">
 					<div class="row">
-						<div class="col-6">
+						<div class="col-12 col-md-6">
 							<div class="card">
 								<div class="card-body py-4-5 px-4">
 									<div class="row">
@@ -26,7 +26,7 @@
 								</div>
 							</div>
 						</div>
-						<div class="col-6">
+						<div class="col-12 col-md-6">
 							<div class="card">
 								<div class="card-body py-4-5 px-4">
 									<div class="row">
@@ -78,6 +78,10 @@
 													Ini</a></li>
 											<li><a class="dropdown-item" href="javascript:void(0)" onclick="filterChartTotalPenjualan('last-month')">Bulan
 													Lalu</a></li>
+											<li><a class="dropdown-item" href="javascript:void(0)" onclick="filterChartTotalPenjualan('this-year')">Tahun
+													Ini</a></li>
+											<li><a class="dropdown-item" href="javascript:void(0)" onclick="filterChartTotalPenjualan('last-year')">Tahun
+													Lalu</a></li>
 										</ul>
 									</div>
 								</div>
@@ -95,7 +99,7 @@
 	<script>
 		let lineChart;
 		$(document).ready(function() {
-			const ctx = document.getElementById('lineChart').getContext('2d');
+			let ctx = $('#lineChart')[0].getContext('2d');
 			lineChart = new Chart(ctx, {
 				type: 'line',
 				data: {
@@ -137,7 +141,6 @@
 					}
 				}
 			});
-
 			var currentRoute = window.location.pathname;
 			if (currentRoute == '/dashboard') {
 				$('#menu-dashboard').addClass('active');
@@ -146,12 +149,12 @@
 			}
 		});
 
-		function filterChartTotalPenjualan(month) {
+		function filterChartTotalPenjualan(timeFilter) {
 			$.ajax({
 				url: 'dashboard/filter-chart',
 				type: "GET",
 				data: {
-					month: month
+					timeFilter: timeFilter
 				},
 				success: function(response) {
 					if (response.status === 'success') {
@@ -159,10 +162,12 @@
 						lineChart.data.datasets[0].data = response.dailyDataPemasukan;
 						lineChart.data.datasets[1].data = response.dailyDataPengeluaran;
 						lineChart.update();
+
 						const untungRugi = response.untungRugi;
 						const cardElement = $('#card-untungrugi');
 						const titleElement = $('#title-untungrugi');
 						const totalElement = $('#total-untungrugi');
+
 						if (untungRugi < 0) {
 							cardElement.removeClass('bg-success-subtle bg-secondary-subtle').addClass(
 								'bg-danger-subtle');
@@ -178,18 +183,29 @@
 						}
 						totalElement.text(
 							`Rp. ${Math.abs(untungRugi).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`);
+
 						let titleStatistik = "Data Statistik";
 						let titlePemasukan = "Total Pemasukan Bulan Ini";
 						let titlePengeluaran = "Total Pengeluaran Bulan Ini";
-						if (month == 'this-month') {
-							titleStatistik = "Data Statistik Bulan ini";
+
+						if (timeFilter == 'this-month') {
+							titleStatistik = "Data Statistik Bulan Ini";
 							titlePemasukan = "Total Pemasukan Bulan Ini";
-							titlePengeluaran = "Total Pengeluaran Bulan Lalu";
-						} else {
+							titlePengeluaran = "Total Pengeluaran Bulan Ini";
+						} else if( timeFilter == 'last-month') {
 							titleStatistik = "Data Statistik Bulan Lalu";
 							titlePemasukan = "Total Pemasukan Bulan Lalu";
-							titlePengeluaran = "Total Pengeluaran Bulan lalu";
+							titlePengeluaran = "Total Pengeluaran Bulan Lalu";
+						} else if( timeFilter == 'this-year') {
+							titleStatistik = "Data Statistik Tahun Ini";
+							titlePemasukan = "Total Pemasukan Tahun Ini";
+							titlePengeluaran = "Total Pengeluaran Tahun Ini";
+						} else if( timeFilter == 'last-year') {
+							titleStatistik = "Data Statistik Tahun Lalu";
+							titlePemasukan = "Total Pemasukan Tahun Lalu";
+							titlePengeluaran = "Total Pengeluaran Tahun Lalu";
 						}
+
 						$('#statistik-title').text(titleStatistik);
 						$('#title-pemasukan').text(titlePemasukan);
 						$('#title-pengeluaran').text(titlePengeluaran);

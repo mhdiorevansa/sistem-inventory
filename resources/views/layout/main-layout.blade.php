@@ -133,9 +133,9 @@
 								</a>
 							</li>
 							<li class="sidebar-item" id="menu-exportsql">
-								<a class='sidebar-link' href="/export-database">
+								<a class='sidebar-link' href="/backup-db">
 									<i class="bi bi-database-up"></i>
-									<span>Export Database</span>
+									<span>Backup Database</span>
 								</a>
 							</li>
 						</ul>
