@@ -19,7 +19,8 @@ class DashboardController extends Controller
                 ->whereMonth('surat_jalan.tanggal', $currentMonth)
                 ->sum('order_items.harga_barang');
             $totalPengeluaran = PembelianBarang::whereMonth('created_at', $currentMonth)
-                ->sum(DB::raw('harga_item * qty'));
+            ->selectRaw('SUM(CAST(harga_item AS DECIMAL(10,2)) * CAST(qty AS DECIMAL(10,2))) as total')
+            ->value('total');
             $untungRugi = $totalPemasukan - $totalPengeluaran;
             $currentDate = now();
             $daysInMonth = $currentDate->daysInMonth;

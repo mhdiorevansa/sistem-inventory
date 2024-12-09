@@ -1,6 +1,6 @@
 @extends('layout.main-layout');
 @section('content')
-   <div id="main">
+	<div id="main">
 		<header class="mb-3">
 			<a class="burger-btn d-block d-xl-none" href="#">
 				<i class="bi bi-justify fs-3"></i>
@@ -23,8 +23,8 @@
 				</div>
 			</div>
 		</div>
-      {{-- modal add --}}
-      <div class="modal fade" id="modalAddPembelian" data-bs-backdrop="static" data-bs-keyboard="false" role="dialog"
+		{{-- modal add --}}
+		<div class="modal fade" id="modalAddPembelian" data-bs-backdrop="static" data-bs-keyboard="false" role="dialog"
 			aria-labelledby="modal_addLabel" aria-hidden="true" tabindex="-1">
 			<div class="modal-dialog modal-dialog-centered modal-md">
 				<div class="modal-content px-2">
@@ -118,10 +118,10 @@
 		</div>
 	</div>
 
-   <script>
-      let tablePembelian;
-      $(document).ready(function() {
-         tablePembelian = $('#pembelian-table').DataTable({
+	<script>
+		let tablePembelian;
+		$(document).ready(function() {
+			tablePembelian = $('#pembelian-table').DataTable({
 				processing: true,
 				serverSide: true,
 				searching: true,
@@ -158,12 +158,17 @@
 						}
 					},
 					{
-						"searchable": false,
 						data: 'total',
 						name: 'total',
 						className: 'text-start',
 						render: function(data, type, row) {
-							return data.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+							if (!data) return '0';
+							const rounded = Math.round(parseFloat(data) * 100) /
+							100;
+							return rounded.toLocaleString('id-ID', {
+								minimumFractionDigits: 0,
+								maximumFractionDigits: 2
+							});
 						}
 					},
 					{
@@ -202,22 +207,23 @@
 				}],
 			});
 
-         var currentRoute = window.location.pathname;
+			var currentRoute = window.location.pathname;
 			if (currentRoute == '/pembelian-barang') {
 				$('#menu-pembelian-barang').addClass('active');
-				$('#menu-dashboard', '#menu-do', '#menu-invoice','#menu-exportsql','#menu-penawaran').removeClass('active');
+				$('#menu-dashboard', '#menu-do', '#menu-invoice', '#menu-exportsql', '#menu-penawaran').removeClass(
+					'active');
 			}
-      })
+		})
 
-      $('#button-modal-tmbh-pembelian').on('click', function() {
+		$('#button-modal-tmbh-pembelian').on('click', function() {
 			$('#modalAddPembelian').modal('show');
 		})
 
-      $('#tambah-pembelian').on('submit', function(e) {
+		$('#tambah-pembelian').on('submit', function(e) {
 			e.preventDefault();
 			$('#button-tambah-pembelian').attr('disabled', true);
 			let formData = new FormData(this);
-			formData.append('harga_item', $("#harga_item").val().replace(/\D/g, ''));
+			formData.append('harga_item', $("#harga_item").val().replace(/[^0-9,]/g, '').replace(',', '.'));
 			$.ajax({
 				headers: {
 					"X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
@@ -277,7 +283,7 @@
 			});
 		});
 
-      $('#filter_pembelian').on('change', function() {
+		$('#filter_pembelian').on('change', function() {
 			let currentUrl = 'pembelian-barang/get-data-pembelian';
 			let date = $('#filter_pembelian').val();
 			let newUrl = currentUrl + '?pembelian_filter=' + date;
@@ -288,7 +294,7 @@
 			});
 		});
 
-      function formatNumber(input) {
+		function formatNumber(input) {
 			var inputVal = input.value.replace(/[^,\d]/g, '');
 			var numberString = inputVal.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 			input.value = numberString;
@@ -341,7 +347,7 @@
 			$('#button-edit-pembelian').attr('disabled', true);
 			var formdata = new FormData(this);
 			formdata.append('_method', 'PUT');
-			formdata.append('harga_item', $("#harga_item_edit").val().replace(/\D/g, ''));
+			formdata.append('harga_item', $("#harga_item_edit").val().replace(/[^0-9,]/g, '').replace(',', '.'));
 			$.ajax({
 				headers: {
 					'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -475,11 +481,11 @@
 			window.open(newUrl, '_blank');
 		}
 
-      $('#modalAddPembelian, #modalEditPembelian').on('hidden.bs.modal', function() {
+		$('#modalAddPembelian, #modalEditPembelian').on('hidden.bs.modal', function() {
 			$('body').css('overflow', 'auto');
 		});
 		$('#modalAddPembelian, #modalEditPembelian').on('shown.bs.modal', function() {
 			$('body').css('overflow', 'hidden');
 		});
-   </script>
+	</script>
 @endsection

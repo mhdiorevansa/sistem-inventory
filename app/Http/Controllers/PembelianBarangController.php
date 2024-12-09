@@ -19,7 +19,15 @@ class PembelianBarangController extends Controller
     public function getPembelian(Request $request)
     {
         try {
-            $data = PembelianBarang::select(['id', 'nama_item', 'qty', 'satuan', 'harga_item', 'created_at', DB::raw('qty * harga_item as total')]);
+            $data = PembelianBarang::select([
+                'id',
+                'nama_item',
+                'qty',
+                'satuan',
+                'harga_item',
+                'created_at',
+                DB::raw('CAST(qty AS DECIMAL(10,2)) * CAST(harga_item AS DECIMAL(10,2)) as total')
+            ]);
             if ($request->filled('pembelian_filter')) {
                 $data->whereDate('created_at', $request->pembelian_filter);
             }

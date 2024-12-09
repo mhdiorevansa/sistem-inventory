@@ -325,7 +325,7 @@
 						name: 'npwp',
 						className: 'text-start',
 						render: function(data, type, row) {
-							return row.no_hp ?? '-';
+							return row.npwp ?? '-';
 						}
 					},
 					{
