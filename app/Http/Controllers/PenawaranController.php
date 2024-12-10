@@ -46,7 +46,7 @@ class PenawaranController extends Controller
             $belanja = $request->input('belanja');
             $ongkir = $request->input('ongkir');
             $total = $belanja * $qty + $ongkir;
-            $net = $total / 2;
+            $net = $total / $qty;
             $sepuluhPersen = $net * 0.10;
             $penawaran = $sepuluhPersen + $net;
             $untung = $penawaran * $qty;
@@ -121,7 +121,7 @@ class PenawaranController extends Controller
             $ongkir = $request->input('ongkir');
 
             $total = $belanja * $qty + $ongkir;
-            $net = $total / 2;
+            $net = $total / $qty;
             $sepuluhPersen = $net * 0.10;
             $penawaran = $sepuluhPersen + $net;
             $untung = $penawaran * $qty;

@@ -160,6 +160,7 @@
 					{
 						data: 'total',
 						name: 'total',
+						"searchable": false,
 						className: 'text-start',
 						render: function(data, type, row) {
 							if (!data) return '0';

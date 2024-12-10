@@ -945,6 +945,7 @@
 							icon: "error",
 							title: response.message,
 						});
+						console.log(response.error);
 					}
 				},
 				error: function(response) {
