@@ -115,15 +115,20 @@
 			table tbody tr:nth-child(9),
 			table tbody tr:nth-child(24),
 			table tbody tr:nth-child(39),
-			table tbody tr:nth-child(55)
-			{
-			border-bottom: 1px solid black;
+			table tbody tr:nth-child(54),
+			table tbody tr:nth-child(69),
+			table tbody tr:nth-child(84),
+			table tbody tr:nth-child(99) {
+				border-bottom: 1px solid black;
 			}
+
 			table tbody tr:nth-child(10),
 			table tbody tr:nth-child(25),
 			table tbody tr:nth-child(40),
-			table tbody tr:nth-child(56)
-			{
+			table tbody tr:nth-child(55),
+			table tbody tr:nth-child(70),
+			table tbody tr:nth-child(85),
+			table tbody tr:nth-child(100) {
 				border-top: 1px solid black;
 			}
 		</style>
@@ -153,7 +158,7 @@
 			{{ strtoupper($data->nama_perusahaan) }}</p>
 		<p style="padding-top: 8pt;padding-left: 5pt;text-indent: 0pt;line-height: 107%;text-align: left; margin-bottom: ">
 			Alamat :
-			{{ ucwords(strtolower($data->alamat)) }}
+			{{ $data->alamat }}
 		</p>
 		<h2 style="padding-top: 8pt;text-align: center;"> INVOICE</h2>
 		<p style="text-align: center;">{{ $data->nomor_invoice }}</p>
@@ -218,19 +223,27 @@
 								{{ $item->jumlah_barang }} {{ strtoupper($item->satuan) }}
 							</p>
 						</td>
-						<td style="width:91pt; border:solid 1pt;">
+						<td style="width:91pt;border:solid 1pt;">
 							<p class="s3" style="padding-left: 5pt; text-indent: 0pt; text-align: left;">
-								{{ 'Rp. ' . number_format($item->harga_barang, 0, ',', '.') }}
+								{{ 'Rp. ' . number_format($item->jumlah_barang * $item->harga_barang, 0, ',', '.') }},-
 							</p>
 						</td>
-						@if ($loop->first)
-							<td style="width:91pt;border-right:solid 1pt;">
+						@php
+							$totalPerPo = $manyData
+							    ->where('nomor_po', $item->nomor_po)
+							    ->sum(fn($item) => $item->jumlah_barang * $item->harga_barang);
+						@endphp
+						@if ($loop->first || $item->nomor_po != $manyData[$loop->index - 1]->nomor_po)
+							<td style="width:91pt;border-top:solid 1pt; border-right:solid 1pt;">
 								<p class="s3" style="padding-left: 5pt; text-indent: 0pt; text-align: left;">
-									{{ 'Rp. ' . number_format($totalHargaBarang, 0, ',', '.') }}
+									{{ 'Rp. ' . number_format($totalPerPo, 0, ',', '.') }},-
 								</p>
 							</td>
-						@else
-							<td style="width:91pt;border-right:solid 1pt;"></td>
+						@else 
+							<td style="width:91pt;border-right:solid 1pt;">
+								<p class="s3" style="padding-left: 5pt; text-indent: 0pt; text-align: left;">
+								</p>
+							</td>
 						@endif
 					</tr>
 				@endforeach
