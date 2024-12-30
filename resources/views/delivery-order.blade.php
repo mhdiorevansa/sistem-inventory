@@ -149,6 +149,10 @@
 								<div id="input-container">
 									<div class="row mb-3">
 										<div class="col-md-2 col-6 mb-md-0 mb-2">
+											<label class="form-label" for="kode_barang">Nomor Urut</label>
+											<input class="form-control" name="nomor_urut[]" type="text" value="00001">
+										</div>
+										<div class="col-md-2 col-6 mb-md-0 mb-2">
 											<label class="form-label" for="kode_barang">Kode</label>
 											<input class="form-control" name="kode_barang[]" type="number">
 										</div>
@@ -169,7 +173,7 @@
 											<label class="form-label" for="jumlah_barang">Qty</label>
 											<input class="form-control" name="jumlah_barang[]" type="number">
 										</div>
-										<div class="col-md-2 col-6 mb-md-0 mb-2">
+										<div class="col-md-2 col-6 mt-md-2 mb-2">
 											<label class="form-label" for="keterangan">Keterangan</label>
 											<input class="form-control" name="keterangan[]" type="text">
 										</div>
@@ -612,8 +616,14 @@
 		});
 
 		$('#add-row').on('click', function() {
+			const rowCount = $('#input-container .row').length;
+			const newRowNumber = (rowCount + 1).toString().padStart(5, '0');
 			const newRow = `
-			<div class="row mb-3">
+					<div class="row mb-3">
+							<div class="col-md-2 col-6 mb-2 mt-md-2">
+							<label class="form-label" for="nomor_urut">Nomor Urut</label>
+							<input class="form-control" name="nomor_urut[]" value="${newRowNumber}" type="text">
+					</div>
 					<div class="col-md-2 col-6 mb-2 mb-md-0">
 						<label class="form-label" for="kode_barang">Kode</label>
 						<input class="form-control" name="kode_barang[]" id="kode_barang" type="number">
@@ -646,8 +656,15 @@
 		});
 
 		$('#add-row-edit').on('click', function() {
+			const rowCount = $('#input-container-edit .row').length;
+			const newRowNumber = (rowCount + 1).toString().padStart(5, '0');
 			const newRow = `
 			<div class="row mb-3">
+					<div class="row mb-3">
+							<div class="col-md-2 col-6 mb-2 mt-md-2">
+							<label class="form-label" for="nomor_urut">Nomor Urut</label>
+							<input class="form-control" name="nomor_urut[]" value="${newRowNumber}" id="nomor_urut_edit" type="text">
+					</div>
 					<div class="col-md-2 col-6 mb-2 mb-md-0">
 						<label class="form-label" for="kode_barang">Kode</label>
 						<input class="form-control" name="kode_barang[]" id="kode_barang_edit" type="number">
@@ -994,6 +1011,10 @@
 							data.forEach((itemData) => {
 								$('#input-container-edit').append(`
                            <div class="row mb-3">
+										<div class="col-md-2 col-6 mb-md-0 mb-2">
+                                 <label class="form-label">Nomor Urut</label>
+                                 <input class="form-control" name="nomor_urut[]" type="number" value="${itemData.nomor_urut}">
+                              </div>
                               <div class="col-md-2 col-6 mb-md-0 mb-2">
                                  <label class="form-label">Kode</label>
                                  <input class="form-control" name="kode_barang[]" type="number" value="${itemData.kode_barang}">

@@ -246,7 +246,8 @@
 					<td
 						style="width:52pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
 						<p class="s5" style="padding-left: 2pt;text-indent: 0pt;line-height: 13pt;text-align: center;">
-							{{ str_pad($loop->iteration, 5, '0', STR_PAD_LEFT) }}</p>
+							{{ $item->nomor_urut ?? '-' }}
+						</p>
 					</td>
 					<td
 						style="width:76pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">

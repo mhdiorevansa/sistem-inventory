@@ -21,6 +21,7 @@ class OrderItems extends Model
         'keterangan',
         'surat_jalan_id',
         'perusahaan_id',
+        'nomor_urut'
     ];
 
     /**

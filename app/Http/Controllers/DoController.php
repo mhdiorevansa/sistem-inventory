@@ -211,6 +211,8 @@ class DoController extends Controller
             'kode_barang.*' => 'required',
             'nama_barang' => 'required|max:70',
             'nama_barang.*' => 'required|max:70',
+            'nomor_urut' => 'required|max:5',
+            'nomor_urut.*' => 'required|max:5',
             'harga_barang' => 'required',
             'harga_barang.*' => 'required',
             'satuan' => 'required',
@@ -235,6 +237,7 @@ class DoController extends Controller
                 OrderItems::create([
                     'harga_barang' => $hargaBersih,
                     'kode_barang' => $request->kode_barang[$index],
+                    'nomor_urut' => $request->nomor_urut[$index],
                     'nama_barang' => $request->nama_barang[$index],
                     'satuan' => $request->satuan[$index],
                     'jumlah_barang' => $request->jumlah_barang[$index],
@@ -271,7 +274,7 @@ class DoController extends Controller
             ->join('surat_jalan', 'order_items.surat_jalan_id', '=', 'surat_jalan.id')
             ->join('perusahaan', 'order_items.perusahaan_id', '=', 'perusahaan.id')
         ->groupBy('surat_jalan_id', 'surat_jalan.nomor_surat_jalan', 'perusahaan.nama_perusahaan', 'surat_jalan.nomor_invoice', 'order_items.perusahaan_id')
-        ->orderBy('surat_jalan_id', 'asc');
+        ->orderBy('surat_jalan.created_at', 'desc');
         if ($request->filled('do_filter')) {
             $data->whereDate('surat_jalan.tanggal', $request->do_filter);
         }
@@ -294,6 +297,7 @@ class DoController extends Controller
                     'order_items.nama_barang',
                 'order_items.harga_barang',
                     'order_items.satuan',
+                    'order_items.nomor_urut',
                     'order_items.jumlah_barang',
                     'order_items.keterangan',
                     'order_items.perusahaan_id',
@@ -333,6 +337,7 @@ class DoController extends Controller
                 'nomor_polisi' => 'required',
                 'kode_barang.*' => 'required',
                 'nama_barang.*' => 'required',
+                'nomor_urut.*' => 'required|max:5',
                 'harga_barang.*' => 'required',
                 'satuan.*' => 'required',
                 'jumlah_barang.*' => 'required|integer|min:1',
@@ -353,6 +358,7 @@ class DoController extends Controller
                     'surat_jalan_id' => $id,
                     'kode_barang' => $request->kode_barang[$index],
                     'nama_barang' => $request->nama_barang[$index],
+                    'nomor_urut' => $request->nomor_urut[$index],
                     'harga_barang' => $hargaBersih,
                     'satuan' => $request->satuan[$index],
                     'jumlah_barang' => $request->jumlah_barang[$index],
@@ -427,6 +433,7 @@ class DoController extends Controller
                 'order_items.jumlah_barang',
                 'order_items.keterangan',
                 'order_items.perusahaan_id',
+                'order_items.nomor_urut',
                 'perusahaan.nama_perusahaan',
                 'perusahaan.alamat'
             )
